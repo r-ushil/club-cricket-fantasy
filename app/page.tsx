@@ -1,7 +1,19 @@
 import AuthButton from "@/components/AuthButton";
 import FAQs from "@/components/FAQs";
+import { createClient } from "@/utils/supabase/server";
+import { redirect } from "next/navigation";
 
 export default async function Index() {
+  const supabase = createClient();
+  
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (user) {
+    return redirect("/home");
+  }
+
   const FAQsData = [
     { "title": "How do I get started?", "content": "Sign up, select players to make a team" },
     { "title": "What are the restrictions on making my team?", "content": "Budget. 4 per squad." },

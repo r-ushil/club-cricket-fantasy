@@ -35,7 +35,7 @@ export default async function SignupPage() {
     console.log("user", user)
 
     const { data, error } = await supabase.from('users').insert([
-      { id: user!.id, fullname: fullName, teamname: teamName }
+      { fullname: fullName, teamname: teamName }
     ]);
     console.log(data, error);
     return redirect("/");
