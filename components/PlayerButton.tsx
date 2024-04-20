@@ -6,12 +6,12 @@ interface Player {
 }
 
 interface PlayerButtonProps {
-  onClick: (player?: Player) => void;
-  player?: Player;
+  onClick: (player: Player | null) => void;
+  player: Player | null;
   index: number;
 }
 
-const PlayerButton: React.FC<PlayerButtonProps> = ({ onClick, player, index }) => {
+const PlayerButton: React.FC<PlayerButtonProps> = ({ onClick, player = null, index }) => {
   return (
     <button
       type="button"
