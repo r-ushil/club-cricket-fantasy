@@ -2,7 +2,7 @@ import os
 import requests
 from collections import defaultdict
 from constants import *
-import datetime
+from datetime import datetime
 
 
 def fetch_both_innings(api_key, match_id):
@@ -75,6 +75,8 @@ def get_fielding_points(oppo_batting_innings):
             name = wicket["fielder_name"]
             fielders[name] += POINTS_PER_RUNOUT
 
+        # else did not bat
+
     return dict(fielders)
 
 
@@ -104,6 +106,10 @@ def get_batting_points(batting_innings):
     batters = {}
 
     for batter in batting_innings:
+
+        if batter["how_out"] == "did not bat":
+            continue
+
         name = batter["batsman_name"]
         points = 0
 
@@ -131,25 +137,35 @@ def get_batting_points(batting_innings):
     return batters
 
 
-def get_matches(api_key, site_id, start_date, end_date):
+def get_matches(api_key, site_id):
     """Get all matches between start_date and end_date. Return a list of match ids."""
-    url = f"https://play-cricket.com/api/v2/matches.json?&site_id={site_id}&season=2024&api_token={api_key}&from_entry_date={start_date.strftime('%d/%m/%Y')}&end_entry_date={end_date.strftime('%d/%m/%Y')}"
+    url = f"https://play-cricket.com/api/v2/matches.json?&site_id={site_id}&season=2024&api_token={api_key}&from_entry_date=01/04/2024&end_entry_date=30/06/2024"
+
     resp = requests.get(url)
     resp.raise_for_status()
     data = resp.json()["matches"]
-    return [match["id"] for match in data]
+
+    matches = []
+    start_date = datetime.strptime(os.environ["START_DATE"], '%d/%m/%Y')
+    end_date = datetime.strptime(os.environ["END_DATE"], '%d/%m/%Y')
+
+
+    for match in data:
+        match_date = datetime.strptime(match["match_date"], '%d/%m/%Y')
+        if match_date >= start_date and match_date <= end_date:
+            matches.append(match["id"])
+
+    return matches
 
 
 def main():
     api_key = os.environ["API_KEY"]
     site_id = os.environ["SITE_ID"]
 
-    start_date = datetime.datetime(2024, 4, 1)
-    end_date = datetime.datetime(2024, 6, 30)
-
     try:
-        matches = get_matches(api_key, site_id, start_date, end_date)
+        matches = get_matches(api_key, site_id)
         for match_id in matches:
+            print(match_id)
             both_innings = fetch_both_innings(api_key, match_id)
             print(get_points(both_innings))
 
