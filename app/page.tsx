@@ -1,42 +1,25 @@
-import DeployButton from "../components/DeployButton";
-import AuthButton from "../components/AuthButton";
-import { createClient } from "@/utils/supabase/server";
-import ConnectSupabaseSteps from "@/components/tutorial/ConnectSupabaseSteps";
-import SignUpUserSteps from "@/components/tutorial/SignUpUserSteps";
-import Header from "@/components/Header";
+import AuthButton from "@/components/AuthButton";
+import FAQs from "@/components/FAQs";
 
 export default async function Index() {
-  const canInitSupabaseClient = () => {
-    // This function is just for the interactive tutorial.
-    // Feel free to remove it once you have Supabase connected.
-    try {
-      createClient();
-      return true;
-    } catch (e) {
-      return false;
-    }
-  };
-
-  const isSupabaseConnected = canInitSupabaseClient();
-
+  const FAQsData = [
+    { "title": "How do I get started?", "content": "Sign up, select players to make a team" },
+    { "title": "What are the restrictions on making my team?", "content": "Budget. 4 per squad." },
+    { "title": "How are points calculated?", "content": "rules" },
+    { "title": "What do I do if I find a bug?", "content": "report it"},
+    { "title": "Should I bet against the banker?", "content": "Never"}
+  ]
   return (
-    <div className="flex-1 w-full flex flex-col gap-20 items-center">
-      <nav className="w-full flex justify-center border-b border-b-foreground/10 h-16">
-        <div className="w-full max-w-4xl flex justify-between items-center p-3 text-sm">
-          <DeployButton />
-          {isSupabaseConnected && <AuthButton />}
-        </div>
-      </nav>
-
-      <div className="animate-in flex-1 flex flex-col gap-20 opacity-0 max-w-4xl px-3">
-        <Header />
-        <main className="flex-1 flex flex-col gap-6">
-          <h2 className="font-bold text-4xl mb-4">Next steps</h2>
-          {isSupabaseConnected ? <SignUpUserSteps /> : <ConnectSupabaseSteps />}
-        </main>
+    <div className="flex-1 w-full flex flex-col items-center justify-center bg-gradient-to-b from-blue-950 to-black">
+      <div className="absolute right-8 top-8">
+        <AuthButton />
       </div>
 
-      <footer className="w-full border-t border-t-foreground/10 p-8 flex justify-center text-center text-xs">
+      <img src="/banner.png" alt="ICUCC Banner" className="object-cover border-b-2 border-gray-700" />
+
+      <h2 className="text-3xl font-bold p-4 my-4">Frequently Asked Questions</h2>
+      <FAQs items={FAQsData} />
+      <footer className="w-full bg-black border-t border-t-foreground/10 p-8 flex justify-center text-center text-xs">
         <p>
           Powered by{" "}
           <a
