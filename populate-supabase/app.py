@@ -3,6 +3,7 @@ import requests
 from collections import defaultdict
 from constants import *
 from datetime import datetime
+from supabase import create_client
 
 
 def fetch_both_innings(api_key, match_id):
@@ -158,17 +159,57 @@ def get_matches(api_key, site_id):
     return matches
 
 
+def populate_supabase(supabase, points):
+    for name, current_gw in points.items():
+
+        try:
+            fetch_response = supabase.table('players').select('Total').eq('Name', name).single().execute()
+        except Exception as e:
+            print(f"Failed to fetch {name} from Supabase.")
+            continue
+            
+        current_total = fetch_response.data['Total']
+        new_total = current_total + current_gw
+
+        try:
+            # Update the player with the new Current GW and Total
+            supabase.table('players').update({
+                'Current GW': current_gw,
+                'Total': new_total
+            }).eq('Name', name).execute()
+
+        except Exception as e:
+            print(f"Failed to update {name}.")
+    
+def match_already_processed(match_id):
+    with open('/app/processed_matches', 'r') as f:
+        for line in f:
+            if str(match_id) in line:
+                return True
+            
+def mark_match_as_processed(match_id):
+    with open('/app/processed_matches', 'a') as f:
+        f.write(f"{match_id}\n")
+
 def main():
     api_key = os.environ["API_KEY"]
     site_id = os.environ["SITE_ID"]
 
     try:
         matches = get_matches(api_key, site_id)
-        for match_id in matches:
-            print(match_id)
-            both_innings = fetch_both_innings(api_key, match_id)
-            print(get_points(both_innings))
+        supabase = create_client(os.environ["NEXT_PUBLIC_SUPABASE_URL"], os.environ["NEXT_PUBLIC_SUPABASE_ANON_KEY"])
 
+        for match_id in matches:
+            if match_already_processed(match_id):
+                continue
+
+            print(f"Match ID: {match_id}")
+            both_innings = fetch_both_innings(api_key, match_id)
+            points = get_points(both_innings)
+            print(points)
+            populate_supabase(supabase, points)
+            mark_match_as_processed(match_id)
+        
     except Exception as e:
         print(f"An error occurred: {e}")
 
