@@ -163,20 +163,20 @@ def populate_supabase(supabase, points):
     for name, current_gw in points.items():
 
         try:
-            fetch_response = supabase.table('players').select('Total').eq('Name', name).single().execute()
+            fetch_response = supabase.table('players').select('total').eq('name', name).single().execute()
         except Exception as e:
             print(f"Failed to fetch {name} from Supabase.")
             continue
             
-        current_total = fetch_response.data['Total']
+        current_total = fetch_response.data['total']
         new_total = current_total + current_gw
 
         try:
-            # Update the player with the new Current GW and Total
+            # Update the player with the new currentgw and total
             supabase.table('players').update({
-                'Current GW': current_gw,
-                'Total': new_total
-            }).eq('Name', name).execute()
+                'currentgw': current_gw,
+                'total': new_total
+            }).eq('name', name).execute()
 
         except Exception as e:
             print(f"Failed to update {name}.")
