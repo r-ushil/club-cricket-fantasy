@@ -2,6 +2,7 @@ import os
 import requests
 from collections import defaultdict
 from constants import *
+import datetime
 
 
 def fetch_both_innings(api_key, match_id):
@@ -35,8 +36,11 @@ def merge_dicts(players, batters, bowlers, fielders):
 
 
 def get_points(innings):
-    players = {}
+    # match may not have happened yet or was abandoned
+    if innings == []:
+        return {}
 
+    players = {}
     # always know there are 2 innings
     if "Imperial College Union" in innings[0]["team_batting_name"]:
         # ICUCC batting first
@@ -127,12 +131,27 @@ def get_batting_points(batting_innings):
     return batters
 
 
+def get_matches(api_key, site_id, start_date, end_date):
+    """Get all matches between start_date and end_date. Return a list of match ids."""
+    url = f"https://play-cricket.com/api/v2/matches.json?&site_id={site_id}&season=2024&api_token={api_key}&from_entry_date={start_date.strftime('%d/%m/%Y')}&end_entry_date={end_date.strftime('%d/%m/%Y')}"
+    resp = requests.get(url)
+    resp.raise_for_status()
+    data = resp.json()["matches"]
+    return [match["id"] for match in data]
+
+
 def main():
     api_key = os.environ["API_KEY"]
-    match_id = os.environ["MATCH_ID"]
+    site_id = os.environ["SITE_ID"]
+
+    start_date = datetime.datetime(2024, 4, 1)
+    end_date = datetime.datetime(2024, 6, 30)
+
     try:
-        both_innings = fetch_both_innings(api_key, match_id)
-        print(get_points(both_innings))
+        matches = get_matches(api_key, site_id, start_date, end_date)
+        for match_id in matches:
+            both_innings = fetch_both_innings(api_key, match_id)
+            print(get_points(both_innings))
 
     except Exception as e:
         print(f"An error occurred: {e}")
