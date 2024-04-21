@@ -1,9 +1,4 @@
-interface Player {
-  id: number;
-  name: string;
-  price: number;
-  squad: number;
-}
+import { Player } from "@/types/player";
 
 interface PlayerButtonProps {
   onClick: (player: Player | null) => void;

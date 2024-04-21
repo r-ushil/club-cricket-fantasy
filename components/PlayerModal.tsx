@@ -1,11 +1,5 @@
 import React, { useState } from 'react';
-
-interface Player {
-  id: number;
-  name: string;
-  price: number;
-  squad: number;
-}
+import { Player } from '@/types/player';
 
 interface PlayerModalProps {
   players: Player[];
@@ -24,7 +18,8 @@ const PlayerModal: React.FC<PlayerModalProps> = ({ players, onClose }) => {
   const [selectedPlayerId, setSelectedPlayerId] = useState<number | null>(null);
 
   const filteredPlayers = players
-    .filter(player => player.name.toLowerCase().includes(searchTerm.toLowerCase()));
+    .filter(player => player.name.toLowerCase().includes(searchTerm.toLowerCase()))
+    .sort((a, b) => a.name.localeCompare(b.name));
 
   return (
     <div className="fixed inset-0 bg-gray-800 bg-opacity-50 overflow-y-auto h-full w-full flex justify-center items-center">
@@ -39,9 +34,13 @@ const PlayerModal: React.FC<PlayerModalProps> = ({ players, onClose }) => {
         <div className="overflow-y-auto max-h-60">
           {filteredPlayers.map(player => (
             <div
-              key={player.id}
-              className={`p-2 mb-1 ${selectedPlayerId === player.id ? 'bg-blue-800' : 'bg-black'} hover:bg-blue-800 cursor-pointer`}
-              onClick={() => setSelectedPlayerId(player.id)}
+              key={player.playerid}
+              className={`p-2 mb-1 ${selectedPlayerId === player.playerid ? 'bg-blue-800' : 'bg-black'} hover:bg-blue-800 cursor-pointer`}
+              onClick={() => {
+                console.log("Selecting player:", player.playerid)
+                setSelectedPlayerId(player.playerid)
+              }
+              }
             >
               <p className="text-gray-100 font-semibold">{player.name}</p>
               <p>
