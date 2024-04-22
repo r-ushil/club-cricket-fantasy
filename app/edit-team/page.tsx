@@ -3,12 +3,15 @@ import PlayerSelectGrid from "@/components/PlayerSelectGrid";
 import { createClient } from "@/utils/supabase/client";
 import { useEffect, useState } from "react";
 import { Player } from "@/types/player";
+import Loading from "@/components/Loading";
 
 
 const EditTeamPage = () => {
   const [currentPlayers, setCurrentPlayers] = useState<(Player | null)[]>([]);
   const [allPlayers, setAllPlayers] = useState<Player[]>([]);
   const [selectedPrice, setSelectedPrice] = useState<number>(0);
+
+  const [loading, setLoading] = useState(true);
 
   // Ensure user is signed in
   const authenticateUser = async () => {
@@ -45,6 +48,7 @@ const EditTeamPage = () => {
       setCurrentPlayers(currentPlayers);
       setAllPlayers(allPlayers as Player[]);
       setSelectedPrice(currentPlayers.reduce((acc, player) => acc + (player?.price || 0), 0));
+      setLoading(false);
     })();
   }, []);
 
@@ -116,17 +120,20 @@ const EditTeamPage = () => {
   return (
     <div className="w-full h-screen flex flex-col items-center bg-gradient-to-b from-blue-950 to-gray-900">
       <h1 className="text-white font-bold text-4xl mt-20">Edit Team</h1>
-      {/* Price Selected So Far */}
-      <h2 className="text-white text-2xl mt-4">Selected Price: £{currentPlayers.reduce((acc, player) => acc + (player?.price || 0), 0)}m</h2>
-      <PlayerSelectGrid
-        selectedPlayers={currentPlayers}
-        allPlayers={allPlayers}
-        onSelect={(newPlayers) => {
-          setCurrentPlayers(newPlayers);
-          setSelectedPrice(newPlayers.reduce((acc, player) => acc + (player?.price || 0), 0));
-        }}
-        onSubmit={onTeamSubmit}
-      />
+      {loading && <Loading />}      
+
+      { !loading && <>
+        <h2 className="text-white text-2xl mt-4">Selected Price: £{currentPlayers.reduce((acc, player) => acc + (player?.price || 0), 0)}m</h2>
+        <PlayerSelectGrid
+          selectedPlayers={currentPlayers}
+          allPlayers={allPlayers}
+          onSelect={(newPlayers) => {
+            setCurrentPlayers(newPlayers);
+            setSelectedPrice(newPlayers.reduce((acc, player) => acc + (player?.price || 0), 0));
+          }}
+          onSubmit={onTeamSubmit}
+        />
+      </>}
     </div>
   );
 };
