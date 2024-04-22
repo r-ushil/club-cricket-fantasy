@@ -49,7 +49,7 @@ export default function TeamDisplay({ userTeamInfo }: TeamDisplayProps) {
           Edit
         </button>
       </div>
-      <ul className="overflow-y-auto h-1/3 pr-4 bg-gray-500 bg-opacity-20 rounded-lg p-4 mb-6">
+      <ul className="overflow-y-scroll h-[360px] pr-4 bg-gray-500 bg-opacity-20 rounded-lg p-4 mb-6">
         {players.map((player) => (
           <li key={player.playerid} className="flex items-center py-1 px-2 justify-between border rounded-md">
             <div className="flex flex-col">
@@ -68,7 +68,7 @@ export default function TeamDisplay({ userTeamInfo }: TeamDisplayProps) {
       </ul>
 
       <h4 className="text-lg font-medium">Transfers</h4>
-      <ul className="list-disc pl-4 bg-gray-500 bg-opacity-20 rounded-lg p-4 my-2">
+      <ul className="list-disc pl-4 bg-gray-500 bg-opacity-20 rounded-lg p-4 mt-2 mb-6">
         {swaps.map((swap) => (
           <li key={swap.oldplayername} className="flex items-center justify-between">
             <div className="flex">
