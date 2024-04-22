@@ -6,6 +6,7 @@ import { Swap } from "@/types/swap";
 import { Player } from "@/types/player";
 import TeamDisplay from "@/components/TeamDisplay";
 import Leaderboard from "@/components/Leaderboard";
+import NavBar from "@/components/NavBar";
 
 interface userTeamInfo {
   teamInfo: Team;
@@ -31,7 +32,7 @@ const getSupabaseInfo = async () => {
       swaps: swaps,
       currentGWPoints: currentGWPoints
     }
-    
+
     return { userTeamInfo, teams };
   }
 
@@ -88,11 +89,11 @@ const getTeams = async (supabase: SupabaseClient<any, "public", any>, userId: st
       total: team.total
     }
   });
-  
+
   return teamsArray;
 }
 
- const getSwaps = async (supabase: SupabaseClient<any, "public", any>, userId: string): Promise<Swap[]> => {
+const getSwaps = async (supabase: SupabaseClient<any, "public", any>, userId: string): Promise<Swap[]> => {
   const { data: swaps } = await supabase.from("swaps").select("oldplayerid, newplayerid").eq("uuid", userId);
 
   // convert swaps to an array of Swap objects
@@ -121,17 +122,23 @@ const getTeams = async (supabase: SupabaseClient<any, "public", any>, userId: st
   ));
 
   return swapsNames;
- } 
+}
 
 export default async function Home() {
 
   const { userTeamInfo, teams } = await getSupabaseInfo();
 
+  // TODO: If user not logged in redirect to /
+
   return (
-    <div>
-      <h1>Home</h1>
-      <TeamDisplay userTeamInfo={userTeamInfo} />
-      <Leaderboard teams={teams} />
-    </div>
+    <div className="w-full">
+      <NavBar />
+      <div className="bg-gradient-to-b from-blue-950 to-gray-900 pb-10">
+          <div className="grid md:grid-cols-2 grid-cols-1 gap-8 px-10 pt-12 md:gap-16 md:px-16 md:pt-12 ">
+            <TeamDisplay userTeamInfo={userTeamInfo} />
+            <Leaderboard teams={teams} />
+          </div>
+      </div>
+    </div >
   );
 }
