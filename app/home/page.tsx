@@ -7,6 +7,13 @@ import { Player } from "@/types/player";
 import TeamDisplay from "@/components/TeamDisplay";
 import Leaderboard from "@/components/Leaderboard";
 
+interface userTeamInfo {
+  teamInfo: Team;
+  players: Player[];
+  swaps: Swap[];
+  currentGWPoints: number;
+}
+
 const getSupabaseInfo = async () => {
   const supabase = createClient();
   const { data: { user } } = await supabase.auth.getUser();
@@ -15,12 +22,17 @@ const getSupabaseInfo = async () => {
   } else {
     const players: Player[] = await getTeamPlayers(supabase, user.id);
     const swaps: Swap[] = await getSwaps(supabase, user.id);
-    const [userTeamInfo, teams]: [Team, Team[]] = await getTeams(supabase, user.id);
-
+    const teams: Team[] = await getTeams(supabase, user.id);
     const currentGWPoints = await getCurrentGWPoints(supabase, players);
 
+    const userTeamInfo: userTeamInfo = {
+      teamInfo: teams.find(team => team.uuid === user.id)!,
+      players: players,
+      swaps: swaps,
+      currentGWPoints: currentGWPoints
+    }
     
-    return { players, userTeamInfo, teams, swaps , currentGWPoints};
+    return { userTeamInfo, teams };
   }
 
 }
@@ -65,28 +77,19 @@ const getTeamPlayers = async (supabase: SupabaseClient<any, "public", any>, user
   return playersArray;
 }
 
-const getTeams = async (supabase: SupabaseClient<any, "public", any>, userId: string): Promise<[Team, Team[]]> => {
-  const { data: teams } = await supabase.from("users").select("fullname, teamname, total")
-  const { data: userTeam } = await supabase.from("users").select("fullname, teamname, total").eq("id", userId);
-
-  const userTeamObj = userTeam!.map(team => {
-    return {
-      fullname: team.fullname,
-      teamname: team.teamname,
-      total: team.total
-    }
-  });
+const getTeams = async (supabase: SupabaseClient<any, "public", any>, userId: string): Promise<Team[]> => {
+  const { data: teams } = await supabase.from("users").select("*")
 
   const teamsArray = teams!.map(team => {
     return {
+      uuid: team.id,
       fullname: team.fullname,
       teamname: team.teamname,
       total: team.total
     }
   });
-
-  // should only have one user team
-  return [userTeamObj[0], teamsArray];
+  
+  return teamsArray;
 }
 
  const getSwaps = async (supabase: SupabaseClient<any, "public", any>, userId: string): Promise<Swap[]> => {
@@ -108,20 +111,14 @@ const getTeams = async (supabase: SupabaseClient<any, "public", any>, userId: st
  } 
 
 export default async function Home() {
-  
-  const { players, userTeamInfo, teams, swaps, currentGWPoints } = await getSupabaseInfo();
+
+  const { userTeamInfo, teams } = await getSupabaseInfo();
 
   return (
     <div>
       <h1>Home</h1>
-      <TeamDisplay userTeamInfo={userTeamInfo} players={players} swaps={swaps} />
+      <TeamDisplay userTeamInfo={userTeamInfo} />
       <Leaderboard teams={teams} />
     </div>
   );
-
-  
-
-
-
-
 }

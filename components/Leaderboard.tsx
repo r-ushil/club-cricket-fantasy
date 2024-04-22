@@ -1,6 +1,4 @@
 import { Team } from "@/types/team";
-import { Swap } from "@/types/swap";
-import { Player } from "@/types/player";
 
 interface LeaderboardProps {
     teams: Team[];
@@ -8,9 +6,20 @@ interface LeaderboardProps {
 
 
 export default function TeamDisplay({ teams }: LeaderboardProps) {
+    const sortedTeams = teams.sort((a, b) => b.total - a.total);
+
     return (
         <div>
-            Todo
+            <h2>Leaderboard</h2>
+            <ol>
+                {sortedTeams.map(team => {
+                    return (
+                        <li key={team.uuid}>
+                            {team.fullname} - {team.teamname} - {team.total}
+                        </li>
+                    )
+                })}
+            </ol>
         </div>
     )
 }
