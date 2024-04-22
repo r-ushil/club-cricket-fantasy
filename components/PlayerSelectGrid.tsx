@@ -11,6 +11,29 @@ interface PlayerSelectGridProps {
   onSubmit: (newPlayers: Player[]) => void;
 }
 
+const validateTeam = (selectedPlayers: (Player | null)[]) => {
+
+  if (selectedPlayers.some(player => player === null)) {
+    return false;
+  }
+
+  // if there aren't 4 of each squad return false
+  for (let i = 1; i <= 4; i++) {
+    if (selectedPlayers.filter(player => player?.squad === i).length !== 4) {
+      return false;
+    }
+  }
+
+  // if total price is over 80 return false
+  const totalPrice = selectedPlayers.reduce((acc, player) => acc + (player?.price || 0), 0);
+  if (totalPrice > 80) {
+    return false;
+  }
+
+  return true;
+
+}
+
 const PlayerSelectGrid = ({ selectedPlayers, allPlayers, onSelect, onSubmit }: PlayerSelectGridProps) => {
   const [modalOpen, setModalOpen] = useState(false);
   const [selectablePlayers, setSelectablePlayers] = useState<Player[]>(allPlayers);
@@ -48,8 +71,8 @@ const PlayerSelectGrid = ({ selectedPlayers, allPlayers, onSelect, onSubmit }: P
         className="mt-4 bg-blue-500 hover:bg-blue-700 text-black font-bold py-2 px-4 rounded"
         onClick={async () => {
           // Validate team
-          if (selectedPlayers.some(player => player === null)) {
-            alert("Please select all players before submitting your team.");
+          if (!validateTeam(selectedPlayers)) {
+            alert("Please ensure you have selected 4 players from each squad and that your team is under £80m.");
           } else {
             await onSubmit(selectedPlayers as Player[]);
           }
