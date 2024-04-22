@@ -6,7 +6,7 @@ import Image from "next/image";
 import { BsChevronCompactDown } from "react-icons/bs";
 
 
-export default async function Index() {
+const checkAuth = async () => {
   const supabase = createClient();
   
   const {
@@ -16,6 +16,11 @@ export default async function Index() {
   if (user) {
     return redirect("/home");
   }
+}
+
+export default function Index() {
+  
+  checkAuth();
 
   const FAQsData = [
     { "title": "How do I get started?", "content": "Sign up, select players to make a team" },
@@ -31,7 +36,7 @@ export default async function Index() {
         {/* Landscape banner for larger screens */}
         <div className="hidden md:block w-full h-full">
           <Image
-            src="/banner.png" // replace with your landscape image path
+            src="/banner.png"
             alt="Landscape Banner"
             layout="fill"
             objectFit="cover"
@@ -42,7 +47,7 @@ export default async function Index() {
         {/* Portrait banner for mobile screens */}
         <div className="md:hidden w-full h-full">
           <Image
-            src="/banner_mobile.png" // replace with your portrait image path
+            src="/banner_mobile.png" 
             alt="Portrait Banner"
             layout="fill"
             objectFit="cover"
