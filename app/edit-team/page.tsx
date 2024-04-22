@@ -8,6 +8,7 @@ import { Player } from "@/types/player";
 const EditTeamPage = () => {
   const [currentPlayers, setCurrentPlayers] = useState<(Player | null)[]>([]);
   const [allPlayers, setAllPlayers] = useState<Player[]>([]);
+  const [selectedPrice, setSelectedPrice] = useState<number>(0);
 
   // Ensure user is signed in
   const authenticateUser = async () => {
@@ -43,6 +44,7 @@ const EditTeamPage = () => {
       const { currentPlayers, allPlayers } = await getPlayers();
       setCurrentPlayers(currentPlayers);
       setAllPlayers(allPlayers as Player[]);
+      setSelectedPrice(currentPlayers.reduce((acc, player) => acc + (player?.price || 0), 0));
     })();
   }, []);
 
@@ -84,7 +86,11 @@ const EditTeamPage = () => {
 
       // More than 2 players were swapped
       if (removedPlayers.length !== 2 && addedPlayers.length !== 2) {
-        alert("You can only swap 2 players from your previous team.");
+
+        const removedPlayersNames = removedPlayers.map(playerId => allPlayers.find(player => player.playerid === playerId)?.name);
+        const addedPlayersNames = addedPlayers.map(playerId => allPlayers.find(player => player.playerid === playerId)?.name);
+        
+        alert("You can only swap 2 players from your previous team. Currently removed players are: " + removedPlayersNames + ". Added players are: " + addedPlayersNames);
         return;
       }
 
@@ -110,11 +116,14 @@ const EditTeamPage = () => {
   return (
     <div className="w-full h-screen flex flex-col items-center bg-gradient-to-b from-blue-950 to-gray-900">
       <h1 className="text-white font-bold text-4xl mt-20">Edit Team</h1>
+      {/* Price Selected So Far */}
+      <h2 className="text-white text-2xl mt-4">Selected Price: £{currentPlayers.reduce((acc, player) => acc + (player?.price || 0), 0)}m</h2>
       <PlayerSelectGrid
         selectedPlayers={currentPlayers}
         allPlayers={allPlayers}
         onSelect={(newPlayers) => {
           setCurrentPlayers(newPlayers);
+          setSelectedPrice(newPlayers.reduce((acc, player) => acc + (player?.price || 0), 0));
         }}
         onSubmit={onTeamSubmit}
       />
