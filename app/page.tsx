@@ -34,7 +34,7 @@ export default function Index() {
       {/* Fullscreen Banner */}
       <div className="relative w-full h-screen">
         {/* Landscape banner for larger screens */}
-        <div className="hidden md:block w-full h-full">
+        <div className="hidden lg:block w-full h-full">
           <Image
             src="/banner.png"
             alt="Landscape Banner"
@@ -45,7 +45,7 @@ export default function Index() {
         </div>
 
         {/* Portrait banner for mobile screens */}
-        <div className="md:hidden w-full h-full">
+        <div className="lg:hidden w-full h-full">
           <Image
             src="/banner_mobile.png" 
             alt="Portrait Banner"
