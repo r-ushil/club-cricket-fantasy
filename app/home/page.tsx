@@ -100,6 +100,8 @@ const getTeams = async (supabase: SupabaseClient<any, "public", any>, userId: st
     return [];
   }
 
+  // get player names from oldplayerids and newplayerids (from supabase)
+
   const swapsArray = swaps.map(swap => {
     return {
       oldplayerid: swap.oldplayerid,
@@ -107,7 +109,18 @@ const getTeams = async (supabase: SupabaseClient<any, "public", any>, userId: st
     }
   });
 
-  return swapsArray;
+  const swapsNames: Swap[] = await Promise.all(swapsArray.map(async swap => {
+    const { data: oldPlayer } = await supabase.from("players").select("name").eq("playerid", swap.oldplayerid);
+    const { data: newPlayer } = await supabase.from("players").select("name").eq("playerid", swap.newplayerid);
+
+    return {
+      oldplayername: oldPlayer![0].name,
+      newplayername: newPlayer![0].name
+    }
+  }
+  ));
+
+  return swapsNames;
  } 
 
 export default async function Home() {

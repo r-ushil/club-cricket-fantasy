@@ -1,4 +1,6 @@
+import { Player } from "./player";
+
 export interface Swap {
-    oldplayerid: number;
-    newplayerid: number;
+    oldplayername: string;
+    newplayername: string;
 }

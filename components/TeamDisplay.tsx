@@ -37,8 +37,8 @@ export default function TeamDisplay({ userTeamInfo }: TeamDisplayProps) {
             <ul>
                 {swaps.map(swap => {
                     return (
-                        <li key={swap.oldplayerid}>
-                            {swap.oldplayerid} - {swap.newplayerid}
+                        <li key={swap.oldplayername}>
+                            {swap.oldplayername} -{">"} {swap.oldplayername}
                         </li>
                     )
                 })}
