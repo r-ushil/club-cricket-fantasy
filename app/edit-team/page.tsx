@@ -18,7 +18,7 @@ const EditTeamPage = () => {
       return;
     }
   }
-  
+
   const getPlayers = async () => {
     const supabase = createClient();
     const { data: { user } } = await supabase.auth.getUser();
@@ -31,7 +31,7 @@ const EditTeamPage = () => {
 
     // Get current user's player objects
     if (currentPlayerIds && currentPlayerIds.length > 0) {
-      currentPlayers = allPlayers!.filter(player => currentPlayerIds.includes(player.id));
+      currentPlayers = currentPlayerIds.map(row => allPlayers!.find(player => player.playerid === row.playerid) || null);
     }
 
     return { currentPlayers, allPlayers };
