@@ -18,7 +18,7 @@ const EditTeamPage = () => {
       return;
     }
   }
-
+  
   const getPlayers = async () => {
     const supabase = createClient();
     const { data: { user } } = await supabase.auth.getUser();
@@ -51,9 +51,12 @@ const EditTeamPage = () => {
     const { data: { user } } = await supabase.auth.getUser();
 
     // Get current user's player objects
-    const { data: currentPlayerIds } = await supabase.from("userplayers").select("playerid").eq("uuid", user!.id);
+    const { data: currentUserPlayerIds } = await supabase.from("userplayers").select("playerid").eq("uuid", user!.id);
+    const currentPlayerIds = currentUserPlayerIds?.map(row => row.playerid) as number[];
 
-    // Get the player IDs that have changed
+
+
+    // Get the new player IDs 
     const newPlayerIds = newPlayers.map(player => player.playerid);
 
     if (!currentPlayerIds || currentPlayerIds.length === 0) {
@@ -67,33 +70,42 @@ const EditTeamPage = () => {
         console.error("Error adding new players to userplayers table:", error);
       }
     } else {
-      console.log("Swaps:", swaps);
-      // const oldPlayerIds = currentPlayerIds.map(player => player.playerid);
 
-      // // Get the player IDs that have been removed
-      // const removedPlayerIds = oldPlayerIds.filter(id => !newPlayerIds.includes(id));
+      // Get players that were removed
 
-      // // Get the player IDs that have been added
-      // const addedPlayerIds = newPlayerIds.filter(id => !oldPlayerIds.includes(id));
+      const removedPlayers = currentPlayerIds.filter(playerId => !newPlayerIds.includes(playerId));
+      const addedPlayers = newPlayerIds.filter(playerId => !currentPlayerIds.includes(playerId));
 
-      // // Remove the removed players from the userplayers table
-      // if (removedPlayerIds.length > 0) {
-      //   await supabase.from("userplayers").delete().eq("uuid", user!.id).in("playerid", removedPlayerIds);
-      // }
+      // Sanity check - should never happen
+      if (removedPlayers.length !== addedPlayers.length) {
+        console.error("Error: removedPlayers and addedPlayers arrays are not the same length");
+        return;
+      }
 
-      // // Add the added players to the userplayers table
-      // if (addedPlayerIds.length > 0) {
-      //   const newPlayerRows = addedPlayerIds.map(playerId => ({ uuid: user!.id, playerid: playerId }));
-      //   await supabase.from("userplayers").insert(newPlayerRows);
-      // }
+      // More than 2 players were swapped
+      if (removedPlayers.length !== 2 && addedPlayers.length !== 2) {
+        alert("You can only swap 2 players from your previous team.");
+        return;
+      }
 
-      // // Update the currentPlayers state
-      // setCurrentPlayers(newPlayers);
+      const swapRows = removedPlayers.map(playerId => ({ uuid: user!.id, oldplayerid: playerId, newplayerid: 0}));
+      addedPlayers.forEach((playerId, i) => {
+        swapRows[i].newplayerid = playerId;
+      });
+
+      // push swaps and userplayers updates to supabase
+      try {
+        await supabase.from("userplayers").delete().eq("uuid", user!.id);
+        await supabase.from("userplayers").insert(newPlayerIds.map(playerId => ({ uuid: user!.id, playerid: playerId })));
+        await supabase.from("swaps").insert(swapRows);
+        window.location.href = "/";
+        // return router.push("/home");
+      } catch (error) {
+        console.error("Error updating userplayers table:", error);
+      }
     }
 
   }
-
-  let swaps: { oldPlayerId: number; newPlayerId: number }[] = [];
 
   return (
     <div className="w-full h-screen flex flex-col items-center bg-gradient-to-b from-blue-950 to-gray-900">
