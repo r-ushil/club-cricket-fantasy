@@ -77,6 +77,12 @@ const EditTeamPage = () => {
       }
     } else {
 
+      // avoid unnecessary updates if no changes were made
+      if (currentPlayerIds.length === newPlayerIds.length && currentPlayerIds.every((playerId, i) => playerId === newPlayerIds[i])) {
+        alert("No changes were made to your team!");
+        return;
+      }
+
       // Get players that were removed
 
       const removedPlayers = currentPlayerIds.filter(playerId => !newPlayerIds.includes(playerId));
@@ -105,8 +111,7 @@ const EditTeamPage = () => {
 
       // push swaps and userplayers updates to supabase
       try {
-        await supabase.from("userplayers").delete().eq("uuid", user!.id);
-        await supabase.from("userplayers").insert(newPlayerIds.map(playerId => ({ uuid: user!.id, playerid: playerId })));
+        await supabase.from("swaps").delete().eq("uuid", user!.id);
         await supabase.from("swaps").insert(swapRows);
         window.location.href = "/";
         // return router.push("/home");
