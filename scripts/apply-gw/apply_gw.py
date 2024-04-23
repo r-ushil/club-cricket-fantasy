@@ -21,6 +21,39 @@ def add_gw_to_total(supabase):
             print(f"Failed to update {player['name']}.")
             continue
 
+def add_player_points_to_total(supabase):
+    try:
+        fetch_response = supabase.table('users').select('id', 'total').execute()
+    except Exception as e:
+        print(f"Failed to fetch users from Supabase.")
+
+    for user in fetch_response.data:
+        id = user['id']
+        total = user['total']
+        try:
+            fetch_response = supabase.table('userplayers').select('playerid').eq('uuid', id).execute()
+        except Exception as e:
+            print(f"Failed to fetch userplayers from Supabase.")
+
+        for player in fetch_response.data:
+            playerid = player['playerid']
+            try:
+                fetch_response = supabase.table('players').select('currentgw').eq('playerid', playerid).execute()
+                print(fetch_response.data)
+            except Exception as e:
+                print(f"Failed to fetch players from Supabase.")
+
+            for player in fetch_response.data:
+                total += player['currentgw']
+        
+        try:
+            print(total)
+            supabase.table('users').update({
+                'total': total
+            }).eq('id', id).execute()
+        except Exception as e:
+            print(f"Failed to update {id}.")
+            continue
 
 def apply_swaps(supabase):
     try:
@@ -48,12 +81,9 @@ def apply_swaps(supabase):
 
     
 def main():
-    api_key = os.environ["API_KEY"]
-    site_id = os.environ["SITE_ID"]
-
     try:
-        
         supabase = create_client(os.environ["NEXT_PUBLIC_SUPABASE_URL"], os.environ["NEXT_PUBLIC_SUPABASE_ANON_KEY"])
+        add_player_points_to_total(supabase)
         add_gw_to_total(supabase)
         apply_swaps(supabase)
 

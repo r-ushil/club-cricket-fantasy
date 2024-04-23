@@ -26,11 +26,13 @@ export default function TeamDisplay({ userTeamInfo }: TeamDisplayProps) {
 
   const { teamInfo, players, swaps, currentGWPoints } = userTeamInfo;
 
+  const totalPoints = players.reduce((acc, player) => acc + player.currentgw, 0) + teamInfo.total;
+
   return (
     <div className="bg-gradient-to-br from-black to-red-950 text-white rounded-lg shadow-md px-6 pt-4">
       <div className="flex justify-between">
         <h1 className="md:text-3xl text-lg font-bold text-blue-600">{teamInfo.teamname}</h1>
-        <p className="md:text-2xl text-lg font-bold text-green-400">Total Points: {teamInfo.total}</p>
+        <p className="md:text-2xl text-lg font-bold text-green-400">Total Points: { totalPoints }</p>
 
 
       </div>
