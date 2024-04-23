@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { headers } from "next/headers";
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import { SubmitButton } from "./submit-button";
@@ -22,10 +21,15 @@ export default function Login({
     });
 
     if (error) {
-      return redirect("/login?message=Could not authenticate user");
+      
+      if (error.message.includes("login credentials")) {
+        return redirect("/login?message=Invalid login credentials. Sign up or contact Suhas or Rushil for a password reset.");
+      }
+
+      return redirect("/login?message=Could not authenticate user. An error has occured.");
     }
 
-    return redirect("/protected");
+    return redirect("/");
   };
 
   const signUp = async (formData: FormData) => {
@@ -44,8 +48,13 @@ export default function Login({
     });
 
     if (error) {
-      console.log(error);
-      return redirect("/login?message=Could not authenticate user");
+
+      if (error.message.includes("already registered")) {
+        return redirect("/login?message=User already registered. Contact Suhas or Rushil for a password reset.");
+      }
+
+      return redirect("/login?message=Could not sign up user. An error has occurred.");
+
     }
 
     return redirect("/signup");
