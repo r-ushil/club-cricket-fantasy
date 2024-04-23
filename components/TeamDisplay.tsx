@@ -26,21 +26,29 @@ export default function TeamDisplay({ userTeamInfo }: TeamDisplayProps) {
 
   const { teamInfo, players, swaps, currentGWPoints } = userTeamInfo;
 
-  const totalPoints = players.reduce((acc, player) => acc + player.currentgw, 0) + teamInfo.total;
+  const swapsContent = swaps.map((swap) => (
+    <li key={swap.oldplayername} className="flex items-center justify-between">
+      <div className="flex">
+        <span className="md:mr-4 mr-2 text-gray-400">{swap.oldplayername}</span>
+        <span className="text-red-400">&#8594;</span> {/* Arrow symbol for swap */}
+      </div>
+      <div>
+        <span className="md:mr-4 mr-2 text-gray-200">{swap.newplayername}</span>
+        <span className="text-green-400">&#8594;</span> {/* Arrow symbol for swap */}
+      </div>
+    </li>
+  ))
 
   return (
-    <div className="bg-gradient-to-br from-black to-red-950 text-white rounded-lg shadow-md px-6 pt-4">
+    <div className="bg-gradient-to-br from-black to-red-950 text-white rounded-lg shadow-lg shadow-gray-600/50 px-6 pt-4">
       <div className="flex justify-between">
         <h1 className="md:text-3xl text-lg font-bold text-blue-600">{teamInfo.teamname}</h1>
-        <p className="md:text-2xl text-lg font-bold text-green-400">Total Points: { totalPoints }</p>
-
-
+        <p className="md:text-2xl text-lg font-bold text-green-400">Total Points: {teamInfo.total}</p>
       </div>
       <div className="flex justify-between">
         <h2 className="md:text-xl text-lg italic text-gray-300">{teamInfo.fullname}</h2>
         <p className="md:text-xl text-lg font-semibold text-gray-200 italic">Current GW: {currentGWPoints}</p>
       </div>
-
       <div className="flex justify-between mt-4 mb-1">
         <h4 className="text-xl font-semibold">Team</h4>
         <button
@@ -71,18 +79,7 @@ export default function TeamDisplay({ userTeamInfo }: TeamDisplayProps) {
 
       <h4 className="text-lg font-medium">Transfers</h4>
       <ul className="list-disc pl-4 bg-gray-500 bg-opacity-20 rounded-lg p-4 mt-2 mb-6">
-        {swaps.map((swap) => (
-          <li key={swap.oldplayername} className="flex items-center justify-between">
-            <div className="flex">
-              <span className="md:mr-4 mr-2 text-gray-400">{swap.oldplayername}</span>
-              <span className="text-red-400">&#8594;</span> {/* Arrow symbol for swap */}
-            </div>
-            <div>
-              <span className="md:mr-4 mr-2 text-gray-200">{swap.newplayername}</span>
-              <span className="text-green-400">&#8594;</span> {/* Arrow symbol for swap */}
-            </div>
-          </li>
-        ))}
+        {swaps.length > 0 ? swapsContent : <span className="text-gray-200">No transfers made</span>}
       </ul>
     </div>
   )
