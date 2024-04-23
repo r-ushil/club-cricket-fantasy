@@ -1,11 +1,11 @@
 "use client";
 import { Team } from "@/types/team";
 import { Swap } from "@/types/swap";
-import { Player } from "@/types/player";
+import { PlayerWithScore } from "@/types/player";
 
 interface UserTeamInfo {
   teamInfo: Team;
-  players: Player[];
+  players: PlayerWithScore[];
   swaps: Swap[];
   currentGWPoints: number;
 }
@@ -60,8 +60,8 @@ export default function TeamDisplay({ userTeamInfo }: TeamDisplayProps) {
               </div>
             </div>
             <div className="flex flex-col text-right">
-              <span className="text-blue-400 md:text-base text-sm font-semibold ">Current GW: 10</span>
-              <span className="text-gray-400 md:text-base text-sm font-semibold italic">Total: 100</span>
+              <span className="text-blue-400 md:text-base text-sm font-semibold ">Current GW: {player.currentgw}</span>
+              <span className="text-gray-400 md:text-base text-sm font-semibold italic">Total: {player.total}</span>
             </div>
           </li>
         ))}

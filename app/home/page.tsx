@@ -3,14 +3,14 @@ import { SupabaseClient } from "@supabase/supabase-js";
 import { redirect } from "next/navigation";
 import { Team } from "@/types/team";
 import { Swap } from "@/types/swap";
-import { Player } from "@/types/player";
+import { PlayerWithScore } from "@/types/player";
 import TeamDisplay from "@/components/TeamDisplay";
 import Leaderboard from "@/components/Leaderboard";
 import NavBar from "@/components/NavBar";
 
 interface userTeamInfo {
   teamInfo: Team;
-  players: Player[];
+  players: PlayerWithScore[];
   swaps: Swap[];
   currentGWPoints: number;
 }
@@ -21,7 +21,7 @@ const getSupabaseInfo = async () => {
   if (!user) {
     return redirect("/login");
   } else {
-    const players: Player[] = await getTeamPlayers(supabase, user.id);
+    const players: PlayerWithScore[] = await getTeamPlayers(supabase, user.id);
     const swaps: Swap[] = await getSwaps(supabase, user.id);
     const teams: Team[] = await getTeams(supabase, user.id);
     const currentGWPoints = await getCurrentGWPoints(supabase, players);
@@ -38,7 +38,7 @@ const getSupabaseInfo = async () => {
 
 }
 
-const getCurrentGWPoints = async (supabase: SupabaseClient<any, "public", any>, players: Player[]): Promise<number> => {
+const getCurrentGWPoints = async (supabase: SupabaseClient<any, "public", any>, players: PlayerWithScore[]): Promise<number> => {
 
   const { data: playersObjs } = await supabase.from("players").select("currentgw").in("playerid", players.map(player => player.playerid));
 
@@ -52,7 +52,7 @@ const getCurrentGWPoints = async (supabase: SupabaseClient<any, "public", any>, 
 
 }
 
-const getTeamPlayers = async (supabase: SupabaseClient<any, "public", any>, userId: string): Promise<Player[]> => {
+const getTeamPlayers = async (supabase: SupabaseClient<any, "public", any>, userId: string): Promise<PlayerWithScore[]> => {
   const { data: playerIds } = await supabase.from("userplayers").select("playerid").eq("uuid", userId);
 
   // get player objects from playerIds
@@ -70,7 +70,9 @@ const getTeamPlayers = async (supabase: SupabaseClient<any, "public", any>, user
       playerid: player.playerid,
       name: player.name,
       price: player.price,
-      squad: player.squad
+      squad: player.squad,
+      currentgw: player.currentgw,
+      total: player.total
     }
   });
 

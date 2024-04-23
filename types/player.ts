@@ -4,3 +4,8 @@ export interface Player {
   price: number;
   squad: number;
 }
+
+export interface PlayerWithScore extends Player {
+  currentgw: number;
+  total: number;
+}
