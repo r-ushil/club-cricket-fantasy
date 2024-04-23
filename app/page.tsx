@@ -4,7 +4,6 @@ import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import Image from "next/image";
 import { BsChevronCompactDown } from "react-icons/bs";
-import { useEffect } from "react";
 
 
 const checkAuth = async () => {

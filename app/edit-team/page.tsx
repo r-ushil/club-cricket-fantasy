@@ -49,6 +49,7 @@ const EditTeamPage = () => {
       setAllPlayers(allPlayers as Player[]);
       setSelectedPrice(currentPlayers.reduce((acc, player) => acc + (player?.price || 0), 0));
       setLoading(false);
+
     })();
   }, []);
 
