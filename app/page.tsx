@@ -4,6 +4,7 @@ import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import Image from "next/image";
 import { BsChevronCompactDown } from "react-icons/bs";
+import { useEffect } from "react";
 
 
 const checkAuth = async () => {
@@ -18,9 +19,10 @@ const checkAuth = async () => {
   }
 }
 
-export default function Index() {
-  
-  checkAuth();
+export default async function Index() {
+
+  "use server"
+  await checkAuth();
 
   const FAQsData = [
     { "title": "How do I get started?", "content": "Sign up, select players to make a team" },
