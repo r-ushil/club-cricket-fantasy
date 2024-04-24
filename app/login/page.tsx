@@ -15,6 +15,10 @@ export default function Login({
     const password = formData.get("password") as string;
     const supabase = createClient();
 
+    // if (email.includes("grabinar") || email.includes("jg")) {
+    //   return redirect("/login?message=You are not authorized to access this page.");
+    // }
+
     const { error } = await supabase.auth.signInWithPassword({
       email,
       password,
@@ -26,7 +30,7 @@ export default function Login({
         return redirect("/login?message=Invalid login credentials. Sign up or contact Suhas or Rushil for a password reset.");
       }
 
-      return redirect("/login?message=Could not authenticate user. An error has occured.");
+     return redirect("/login?message=Could not authenticate user. An error has occured.");
     }
 
     return redirect("/");

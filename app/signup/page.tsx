@@ -1,6 +1,8 @@
 import { createClient } from "@/utils/supabase/server";
 import { SubmitButton } from "../login/submit-button";
 import { redirect } from "next/navigation";
+import { SupabaseClient } from "@supabase/supabase-js";
+import { exit } from "process";
 
 
 export default async function SignupPage() {
@@ -21,6 +23,65 @@ export default async function SignupPage() {
     return redirect("/");
   }
 
+  // Find position for insertion: if 0 total points exists, OR less than 0 total points exists
+  const insert_zero_position = async (supabase: SupabaseClient<any, "public", any>) => {
+    "use server"
+
+    // check for if a position with 0 total points exists
+    const { data: zero, error: e1 } = await supabase.from('users').select('position').eq('total', 0);
+
+    // check if there are any users with total points less than 0
+    const { data: lessthanzero, error: e2 } = await supabase.from('users').select('id, position').lt('total', 0).order('position', { ascending: true });
+
+    if (!lessthanzero || lessthanzero.length === 0) {
+      // if no users with total points less than 0, return the position of the user with total points 0
+      if (!zero || zero.length === 0) {
+        return null;
+      }
+      return zero[0].position;
+
+    } else {
+      
+      // if zero exists, return the position of 0, else return the position of the first user with total points less than 0
+      const position = (!zero || zero.length === 0) ? lessthanzero[0].position : zero[0].position;
+
+      for (let i = 0; i < lessthanzero.length; i++) {
+        const { data, error } = await supabase.from('users').update({ position: lessthanzero[i].position + 1 }).eq('id', lessthanzero[i].id);
+        if (error) {
+          console.error("Error updating position", error);
+          return position;
+        }
+      }
+
+      return position;
+
+    }
+ 
+  }
+
+  // Find position for insertion: iff all total points > 0
+  const append_zero = async (supabase: SupabaseClient<any, "public", any>) => {
+      "use server"
+      const { data: users, error: e1 } = await supabase.from('users').select('position').gt('total', 0).order('position', { ascending: false });
+  
+      if (!users) {
+        return null;
+      }
+
+      // get the first position with total points greater than 0
+      const position = users[0].position;
+
+      // get number of users with the same position as the first user with total points greater than 0
+      const { data: same_position, error: e2 } = await supabase.from('users').select('id').eq('position', position);
+
+      if (!same_position) {
+        // impossible
+        return null;
+      }
+
+      return position + same_position.length;
+    }
+
   const handleSubmit = async (formData: FormData) => {
     "use server";
     console.log("formData", formData)
@@ -34,8 +95,20 @@ export default async function SignupPage() {
     } = await supabase.auth.getUser();
     console.log("user", user)
 
+    let position: number = 0;
+
+    const inserted_position = await insert_zero_position(supabase);
+    if (inserted_position) {
+      position = inserted_position;
+    } else {
+      const appended_position = await append_zero(supabase);
+      if (appended_position) {
+        position = appended_position;
+      }
+    }
+
     const { data, error } = await supabase.from('users').insert([
-      { fullname: fullName, teamname: teamName }
+      { fullname: fullName, teamname: teamName, position: position }
     ]);
     console.log(data, error);
     return redirect("/");

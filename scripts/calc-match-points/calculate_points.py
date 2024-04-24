@@ -159,27 +159,121 @@ def get_matches(api_key, site_id):
     return matches
 
 
-def populate_supabase(supabase, points):
-    for name, current_gw in points.items():
 
+def calculate_positions(supabase, pre_total_update, post_total_update):
+    sorted_post_totals = sorted(post_total_update, key=lambda x: -x['total'])
+
+    # for quicker lookup
+    old_positions = {item['id']: item['position'] for item in pre_total_update}
+    
+    current_position = 0
+    last_total = None
+    new_positions_and_form = []
+
+    for index, item in enumerate(sorted_post_totals):
+        if item['total'] != last_total:
+            current_position = index + 1
+            last_total = item['total']
+        
+        old_position = old_positions.get(item['id'], None)
+        if old_position is None:
+            old_position = 10000 # should never happen
+        else:
+            if current_position < old_position:
+                form = True
+            elif current_position > old_position:
+                form = False
+            else:
+                form = None
+    
+        new_positions_and_form.append({
+            'id': item['id'],
+            'total': item['total'],
+            'position': current_position,
+            'form': form
+        })
+
+    print(new_positions_and_form)
+
+    for item in new_positions_and_form:
         try:
-            fetch_response = supabase.table('players').select('total').eq('name', name).single().execute()
+            supabase.table('users').update({
+                'total': item['total'],
+                'position': item['position'],
+                'form': item['form']
+            }).eq('id', item['id']).execute()
+        except Exception as e:
+            print(f"Failed to update {item['id']} in Supabase.")
+            continue
+
+
+
+def populate_supabase(supabase, points):
+
+
+    # todo - on sign up, need to add the position as the largest position if table's largest position's total is 0, else add the largest position + 1
+
+    try:
+        initial_positions_resp = supabase.table('users').select('id, total, position, form').execute()
+    except Exception as e:
+        print(f"Failed to fetch positions from Supabase.")
+        return
+    
+   
+    for name, current_gw in points.items():
+        try:
+            fetch_response = supabase.table('players').select('playerid, currentgw, total').eq('name', name).single().execute()
         except Exception as e:
             print(f"Failed to fetch {name} from Supabase.")
             continue
             
-        current_total = fetch_response.data['total']
-        new_total = current_total + current_gw
+        new_total = fetch_response.data['total'] + current_gw
+        new_gw = fetch_response.data['currentgw'] + current_gw
 
         try:
             # Update the player with the new currentgw and total
             supabase.table('players').update({
-                'currentgw': current_gw,
+                'currentgw': new_gw,
                 'total': new_total
             }).eq('name', name).execute()
 
         except Exception as e:
             print(f"Failed to update {name}.")
+
+        try:
+            userplayers = supabase.table('userplayers').select('uuid').eq('playerid', fetch_response.data['playerid']).execute()
+        except Exception as e:
+            print(f"Failed to fetch uuids from userplayers in Supabase.")
+            continue
+
+        for uuid in userplayers.data:
+            try:
+                user = supabase.table('users').select('fullname, total').eq('id', uuid['uuid']).single().execute()
+            except Exception as e:
+                print(f"Failed to fetch {uuid['uuid']} from Supabase.")
+                continue
+
+
+            fullname = user.data['fullname']
+            new_user_total = user.data['total'] + current_gw
+
+            try:
+                supabase.table('users').update({
+                    'total': new_user_total
+                }).eq('id', uuid['uuid']).execute()
+            except Exception as e:
+                print(f"Failed to update {fullname} in Supabase.")
+                continue
+
+        
+    try:
+        post_positions_resp = supabase.table('users').select('id, total, position, form').execute()
+    except Exception as e:
+        print(f"Failed to fetch post-total positions from Supabase.")
+        return
+    
+    calculate_positions(supabase, initial_positions_resp.data, post_positions_resp.data)
+
     
 def match_already_processed(match_id):
     with open('/app/processed_matches', 'r') as f:
