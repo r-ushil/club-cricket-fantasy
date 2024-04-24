@@ -55,8 +55,8 @@ const PlayerSelectGrid = ({ selectedPlayers, allPlayers, onSelect, onSubmit }: P
   };
 
   return (
-    <div className="items-center">
-      <div className="grid grid-cols-4 gap-4 mt-8">
+    <div className="flex flex-col items-center">
+      <div className="grid lg:grid-cols-4 gap-8 mt-8 grid-cols-2">
         {selectedPlayers.map((player, i) => (
           <div key={i}>
             <PlayerButton index={i} player={player} onClick={() => {
@@ -68,7 +68,7 @@ const PlayerSelectGrid = ({ selectedPlayers, allPlayers, onSelect, onSubmit }: P
       </div>
       {modalOpen && <PlayerModal players={selectablePlayers} onClose={handlePlayerSelect} />}
       <button
-        className="mt-4 bg-blue-500 hover:bg-blue-700 text-black font-bold py-2 px-4 rounded"
+        className="my-8 bg-blue-800 hover:bg-blue-700 text-gray-200 font-bold py-2 px-4 rounded"
         onClick={async () => {
           // Validate team
           if (!validateTeam(selectedPlayers)) {
@@ -77,7 +77,7 @@ const PlayerSelectGrid = ({ selectedPlayers, allPlayers, onSelect, onSubmit }: P
             await onSubmit(selectedPlayers as Player[]);
           }
         }}
-      >Submit
+      >Confirm
       </button>
     </div>
   );

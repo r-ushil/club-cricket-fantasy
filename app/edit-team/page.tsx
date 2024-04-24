@@ -100,12 +100,12 @@ const EditTeamPage = () => {
 
         const removedPlayersNames = removedPlayers.map(playerId => allPlayers.find(player => player.playerid === playerId)?.name);
         const addedPlayersNames = addedPlayers.map(playerId => allPlayers.find(player => player.playerid === playerId)?.name);
-        
+
         alert("You can only swap 2 players from your previous team. Currently removed players are: " + removedPlayersNames + ". Added players are: " + addedPlayersNames);
         return;
       }
 
-      const swapRows = removedPlayers.map(playerId => ({ uuid: user!.id, oldplayerid: playerId, newplayerid: 0}));
+      const swapRows = removedPlayers.map(playerId => ({ uuid: user!.id, oldplayerid: playerId, newplayerid: 0 }));
       addedPlayers.forEach((playerId, i) => {
         swapRows[i].newplayerid = playerId;
       });
@@ -124,22 +124,30 @@ const EditTeamPage = () => {
   }
 
   return (
-    <div className="w-full h-screen flex flex-col items-center bg-gradient-to-b from-blue-950 to-gray-900">
-      <h1 className="text-white font-bold text-4xl mt-20">Edit Team</h1>
-      {loading && <Loading />}      
+    <div className="w-full">
+      {/* NavBar */}
+      <nav className="w-full flex items-center justify-between bg-gray-800 border-b border-b-foreground/10 h-16 py-4 px-10">
+        <div className="flex items-center">
+          <img src="/icucc_logo.png" alt="ICUCC Logo" className="h-12" />
+          <h3 className="text-white text-xl font-bold pl-4">ICUCC Fantasy</h3>
+        </div>
+      </nav>
 
-      { !loading && <>
-        <h2 className="text-white text-2xl mt-4">Selected Price: £{currentPlayers.reduce((acc, player) => acc + (player?.price || 0), 0)}m</h2>
-        <PlayerSelectGrid
-          selectedPlayers={currentPlayers}
-          allPlayers={allPlayers}
-          onSelect={(newPlayers) => {
-            setCurrentPlayers(newPlayers);
-            setSelectedPrice(newPlayers.reduce((acc, player) => acc + (player?.price || 0), 0));
-          }}
-          onSubmit={onTeamSubmit}
-        />
-      </>}
+      {/* Main Content */}
+      <div className="w-full flex flex-col items-center bg-gradient-to-b from-gray-950 to-red-950">
+        {loading ? <Loading /> : <>
+          <h2 className="text-white text-2xl mt-8">Selected Price: £{currentPlayers.reduce((acc, player) => acc + (player?.price || 0), 0)}m</h2>
+          <PlayerSelectGrid
+            selectedPlayers={currentPlayers}
+            allPlayers={allPlayers}
+            onSelect={(newPlayers) => {
+              setCurrentPlayers(newPlayers);
+              setSelectedPrice(newPlayers.reduce((acc, player) => acc + (player?.price || 0), 0));
+            }}
+            onSubmit={onTeamSubmit}
+          />
+        </>}
+      </div>
     </div>
   );
 };

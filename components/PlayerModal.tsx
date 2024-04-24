@@ -22,7 +22,7 @@ const PlayerModal: React.FC<PlayerModalProps> = ({ players, onClose }) => {
     .sort((a, b) => a.name.localeCompare(b.name));
 
   return (
-    <div className="fixed inset-0 bg-gray-800 bg-opacity-50 overflow-y-auto h-full w-full flex justify-center items-center">
+    <div className="fixed inset-0 bg-gray-800 bg-opacity-50 overflow-y-auto h-full w-full flex justify-center items-center z-20">
       <div className="bg-black p-5 rounded-lg shadow max-w-md w-full m-4">
         <input
           type="text"
