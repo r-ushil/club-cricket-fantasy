@@ -123,9 +123,9 @@ def get_batting_points(batting_innings):
             points = runs * POINTS_PER_RUN
 
         if runs >= 100:
-            points += 50 * POINTS_PER_100
+            points += 50 + POINTS_PER_100
         elif runs >= 50:
-            points += 25 * POINTS_PER_50
+            points += 25 + POINTS_PER_50
 
         fours = int(batter["fours"])
         points += fours * POINTS_PER_FOUR
@@ -209,10 +209,7 @@ def calculate_positions(supabase, pre_total_update, post_total_update):
 
 
 def populate_supabase(supabase, points):
-
-
-    # todo - on sign up, need to add the position as the largest position if table's largest position's total is 0, else add the largest position + 1
-
+    
     try:
         initial_positions_resp = supabase.table('users').select('id, total, position, form').execute()
     except Exception as e:
