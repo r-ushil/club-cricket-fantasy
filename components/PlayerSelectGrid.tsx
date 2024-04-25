@@ -59,7 +59,7 @@ const PlayerSelectGrid = ({ selectedPlayers, allPlayers, onSelect, onSubmit }: P
       <div className="grid lg:grid-cols-4 gap-8 mt-8 grid-cols-2">
         {selectedPlayers.map((player, i) => (
           <div key={i}>
-            <PlayerButton index={i} player={player} onClick={() => {
+            <PlayerButton player={player} onClick={() => {
               setSelectedOldPlayerId(i);
               setModalOpen(true);
             }} />

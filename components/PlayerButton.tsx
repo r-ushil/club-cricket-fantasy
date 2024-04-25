@@ -5,7 +5,6 @@ import TshirtIcon from "./TshirtIcon";
 interface PlayerButtonProps {
   onClick: (player: Player | null) => void;
   player: Player | null;
-  index: number;
 }
 
 const formatSquad = (squad: number) => {
@@ -16,14 +15,14 @@ const formatSquad = (squad: number) => {
   }
 }
 
-const PlayerButton: React.FC<PlayerButtonProps> = ({ onClick, player = null, index }) => {
+const PlayerButton: React.FC<PlayerButtonProps> = ({ onClick, player = null }) => {
   let shirtText = "+";
-  let shirtColour = "gray-800";
+  let selected = false;
   let name = "Select Player"
 
   if (player) {
+    selected = true;
     shirtText = formatSquad(player.squad);
-    shirtColour = "blue-950"
     name = player.name;
   }
 
@@ -34,7 +33,7 @@ const PlayerButton: React.FC<PlayerButtonProps> = ({ onClick, player = null, ind
         className="relative"
         onClick={() => onClick(player)}
       >
-        <TshirtIcon shirtText={shirtText} shirtColour={shirtColour} />
+        <TshirtIcon shirtText={shirtText} selected={selected} />
       </button>
       <span className="bg-gray-900 px-2 py-1 rounded-lg text-xs z-10 -mt-2">{name}</span>
       {player && <span className="bg-yellow-800 px-2 rounded-md text-xs z-0 ">£{player.price}m</span>}

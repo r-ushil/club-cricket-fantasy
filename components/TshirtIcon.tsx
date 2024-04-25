@@ -2,10 +2,11 @@ import { TbShirtFilled } from "react-icons/tb";
 
 interface TshirtIconProps {
   shirtText: string;
-  shirtColour: string;
+  selected: boolean;
 }
 
-const TshirtIcon = ({ shirtText, shirtColour }: TshirtIconProps) => {
+const TshirtIcon = ({ shirtText, selected}: TshirtIconProps) => {
+  const shirtColour = selected ? "blue-950" : "gray-800";
   return (
     <div className="relative">
       <TbShirtFilled className={`text-${shirtColour} text-6xl`} />
