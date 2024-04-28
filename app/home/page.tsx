@@ -9,6 +9,7 @@ import Leaderboard from "@/components/Leaderboard";
 import NavBar from "@/components/NavBar";
 import { Suspense } from "react";
 import Loading from "@/components/Loading";
+import Announcement from "@/components/Announcement";
 
 interface userTeamInfo {
   teamInfo: Team;
@@ -139,6 +140,7 @@ export default async function Home() {
   return (
     <div className="w-full">
       <NavBar />
+      <Announcement />
       <Suspense fallback={<Loading />}>
         <div className="bg-gradient-to-b from-blue-950 to-gray-900 pb-10 min-h-screen">
           <div className="grid md:grid-cols-2 grid-cols-1 gap-8 px-10 pt-12 md:gap-16 md:px-16 md:pt-12 ">
