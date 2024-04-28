@@ -126,16 +126,16 @@ export default async function SignupPage({
   return (
     <div className="w-screen h-screen px-8 items-center justify-center gap-2">
       <Image
-          src="/login_background.png"
-          alt="Login background"
+          src="/signup_background.png"
+          alt="Signup background"
           layout="fill"
           objectFit="cover"
           quality={100}
           className="lg:flex hidden"
         />
         <Image
-          src="/login_mobile.png"
-          alt="Login background"
+          src="/signup_mobile.png"
+          alt="Signup background"
           layout="fill"
           objectFit="cover"
           quality={100}
