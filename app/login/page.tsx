@@ -139,9 +139,11 @@ export default function Login({
             Sign Up
           </SubmitButton>
           {searchParams?.message && (
-            <p className="mt-4 p-4 bg-foreground/10 text-foreground text-center">
-              {searchParams.message}
-            </p>
+            <div className="flex justify-center">
+              <p className="mt-4 p-4 bg-foreground/10 text-foreground text-center w-70vw max-w-full overflow-hidden">
+                {searchParams.message}
+              </p>
+            </div>
           )}
         </form>
       </div>
