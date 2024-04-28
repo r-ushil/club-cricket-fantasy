@@ -2,10 +2,15 @@ import { createClient } from "@/utils/supabase/server";
 import { SubmitButton } from "../login/submit-button";
 import { redirect } from "next/navigation";
 import { SupabaseClient } from "@supabase/supabase-js";
-import { exit } from "process";
+import Image from "next/image";
 
 
-export default async function SignupPage() {
+export default async function SignupPage({
+  searchParams,
+}: {
+  searchParams: { message: string };
+}) {
+  
   const supabase = createClient();
 
   // Ensure user is signed in
@@ -88,6 +93,10 @@ export default async function SignupPage() {
     const fullName = formData.get('fullName') as string;
     const teamName = formData.get('teamName') as string;
 
+    if (teamName.length > 20) {
+      return redirect("/signup?message=Team name must be less than 20 characters");
+    }
+
     const supabase = createClient();
 
     const {
@@ -115,30 +124,61 @@ export default async function SignupPage() {
   }
 
   return (
-    <div className="flex-1 w-full flex flex-col items-center justify-center bg-gradient-to-b from-blue-950 to-black">
-      <form className="flex flex-col gap-4">
-        <label htmlFor="fullName">Full Name</label>
-        <input
-          type="text"
-          id="fullName"
-          name="fullName"
-          className="p-2 rounded-md text-black"
+    <div className="w-screen h-screen px-8 items-center justify-center gap-2">
+      <Image
+          src="/login_background.png"
+          alt="Login background"
+          layout="fill"
+          objectFit="cover"
+          quality={100}
+          className="lg:flex hidden"
         />
-        <label htmlFor="teamName">Team Name</label>
-        <input
-          type="text"
-          id="teamName"
-          name="teamName"
-          className="p-2 rounded-md text-black"
+        <Image
+          src="/login_mobile.png"
+          alt="Login background"
+          layout="fill"
+          objectFit="cover"
+          quality={100}
+          className="lg:hidden flex"
         />
-        <SubmitButton
+
+      <div className="flex flex-col items-center lg:mt-20 mt-40">
+        <form className="animate-in flex flex-col justify-center gap-2 text-foreground bg-gray-900 bg-opacity-70 rounded-lg p-5">
+          <label className="text-md" htmlFor="fullName">
+            Full Name
+          </label>
+          <input
+            className="rounded-md px-4 py-2 bg-inherit border mb-6"
+            name="fullName"
+            placeholder="Simon Animal"
+            required
+          />
+          <label className="text-md" htmlFor="teamName">
+            Team Name
+          </label>
+          <input
+            className="rounded-md px-4 py-2 bg-inherit border mb-6"
+            type="text"
+            name="teamName"
+            placeholder="The Mighty 3s"
+            required
+          />
+         <SubmitButton
           className="py-2 px-4 rounded-md no-underline bg-btn-background hover:bg-btn-background-hover"
           formAction={handleSubmit}
           pendingText="Creating account..."
         >
           Continue
         </SubmitButton>
-      </form>
+        {searchParams?.message && (
+            <div className="flex justify-center">
+              <p className="mt-4 p-4 bg-foreground/10 text-foreground text-center w-70vw max-w-full overflow-hidden">
+                {searchParams.message}
+              </p>
+            </div>
+          )}
+        </form>
+    </div>
     </div>
   );
 };
