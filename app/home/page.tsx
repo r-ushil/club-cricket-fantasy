@@ -7,6 +7,8 @@ import { PlayerWithScore } from "@/types/player";
 import TeamDisplay from "@/components/TeamDisplay";
 import Leaderboard from "@/components/Leaderboard";
 import NavBar from "@/components/NavBar";
+import { Suspense } from "react";
+import Loading from "@/components/Loading";
 
 interface userTeamInfo {
   teamInfo: Team;
@@ -130,17 +132,21 @@ const getSwaps = async (supabase: SupabaseClient<any, "public", any>, userId: st
 
 export default async function Home() {
 
+  // display loading spinner while fetching data
+
   const { userTeamInfo, teams } = await getSupabaseInfo();
 
   return (
     <div className="w-full">
       <NavBar />
+      <Suspense fallback={<Loading />}>
         <div className="bg-gradient-to-b from-blue-950 to-gray-900 pb-10 min-h-screen">
           <div className="grid md:grid-cols-2 grid-cols-1 gap-8 px-10 pt-12 md:gap-16 md:px-16 md:pt-12 ">
             <TeamDisplay userTeamInfo={userTeamInfo} />
             <Leaderboard teams={teams} />
           </div>
       </div>
+      </Suspense>
     </div >
   );
 }
