@@ -10,19 +10,24 @@ interface LeaderboardProps {
 
 
 export default function TeamDisplay({ teams }: LeaderboardProps) {
-  const sortedTeams = teams.sort((a, b) => b.total - a.total);
+  const sortedTeams = teams.sort((a, b) => a.position - b.position);
 
-  const getFormIcon = (position: number) => {
-    // If gone up, return green arrow
-    // return <FaArrowAltCircleUp className="text-green-500 text-sm" />;
+  const getFormIcon = (form: boolean | null) => {
 
-    // If gone down, return red arrow
-    // return <FaArrowAltCircleDown className="text-red-500 text-sm" />;
+    // If form is null, return grey hyphen
+    if (form === null) {
+      return <FaMinus className="text-gray-500 text-sm" />;
+    }
 
-    // If stayed the same, return grey hyphen
-    // return <FaMinus className="text-gray-500 text-sm" />;
+    if (form === true) {
+      return <FaArrowAltCircleUp className="text-green-500 text-sm" />;
+    }
 
-    // If new entry, return blue dot
+    if (form === false) {
+      return <FaArrowAltCircleDown className="text-red-500 text-sm" />;
+    }
+
+    // should never happen - this is an error.
     return <FaCircle className="text-blue-500 text-sm" />;
   };
 
@@ -34,8 +39,8 @@ export default function TeamDisplay({ teams }: LeaderboardProps) {
         {sortedTeams.map((team) => (
           <li key={team.uuid} className="grid lg:grid-cols-[50px_250px_50px] grid-cols-[30px_150px_30px] items-center py-1 px-2 justify-between border rounded-md">
             <div className="flex items-center">
-              {getFormIcon(1)}
-              <span className="font-semibold ml-2 text-center">1</span>
+              {getFormIcon(team.form)}
+              <span className="font-semibold ml-2 text-center">{team.position}</span>
             </div>
             <div className="flex flex-col">
               <span className="font-bold text-left">{team.teamname}</span>

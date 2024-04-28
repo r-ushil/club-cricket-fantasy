@@ -88,7 +88,9 @@ const getTeams = async (supabase: SupabaseClient<any, "public", any>, userId: st
       uuid: team.id,
       fullname: team.fullname,
       teamname: team.teamname,
-      total: team.total
+      total: team.total,
+      position: team.position,
+      form: team.form,
     }
   });
 
@@ -130,12 +132,10 @@ export default async function Home() {
 
   const { userTeamInfo, teams } = await getSupabaseInfo();
 
-  // TODO: If user not logged in redirect to /
-
   return (
     <div className="w-full">
       <NavBar />
-      <div className="bg-gradient-to-b from-blue-950 to-gray-900 pb-10">
+        <div className="bg-gradient-to-b from-blue-950 to-gray-900 pb-10 min-h-screen">
           <div className="grid md:grid-cols-2 grid-cols-1 gap-8 px-10 pt-12 md:gap-16 md:px-16 md:pt-12 ">
             <TeamDisplay userTeamInfo={userTeamInfo} />
             <Leaderboard teams={teams} />
