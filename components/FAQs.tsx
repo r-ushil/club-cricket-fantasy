@@ -17,7 +17,7 @@ const FAQs: React.FC<FAQsProps> = ({ items }) => {
   };
 
   return (
-    <div className="bg-gray-900 p-6 rounded mb-8">
+    <div className="bg-gray-900 p-6 rounded">
 
       {items.map((item, index) => (
         <div key={item.title} className="my-2 border border-blue-900 rounded">

@@ -7,8 +7,8 @@ import { PlayerWithScore } from "@/types/player";
 import TeamDisplay from "@/components/TeamDisplay";
 import Leaderboard from "@/components/Leaderboard";
 import NavBar from "@/components/NavBar";
-import { Suspense } from "react";
-import Loading from "@/components/Loading";
+import FAQs from "@/components/FAQs";
+import Image from "next/image";
 import Announcement from "@/components/Announcement";
 
 interface userTeamInfo {
@@ -131,9 +131,14 @@ const getSwaps = async (supabase: SupabaseClient<any, "public", any>, userId: st
   return swapsNames;
 }
 
-export default async function Home() {
+const FAQsData = [
+  { "title": "What are the restrictions on making my team?", "content": "Budget. 4 per squad." },
+  { "title": "How are points calculated?", "content": "rules" },
+  { "title": "What do I do if I find a bug?", "content": "report it" },
+  { "title": "Should I bet against the banker?", "content": "Never" }
+]
 
-  // display loading spinner while fetching data
+export default async function Home() {
 
   const { userTeamInfo, teams } = await getSupabaseInfo();
 
@@ -141,14 +146,30 @@ export default async function Home() {
     <div className="w-full">
       <NavBar />
       <Announcement />
-      <Suspense fallback={<Loading />}>
-        <div className="bg-gradient-to-b from-blue-950 to-gray-900 pb-10 min-h-screen">
-          <div className="grid md:grid-cols-2 grid-cols-1 gap-8 px-10 pt-12 md:gap-16 md:px-16 md:pt-12 ">
-            <TeamDisplay userTeamInfo={userTeamInfo} />
-            <Leaderboard teams={teams} />
+      <div className="min-h-screen">
+        <div className="bg-gradient-to-b from-blue-950 to-gray-900 grid md:grid-cols-2 grid-cols-1 gap-8 px-10 pt-12 pb-10 lg:gap-16 lg:px-16 lg:pt-12 lg:pb-10">
+          <TeamDisplay userTeamInfo={userTeamInfo} />
+          <Leaderboard teams={teams} />
+        </div>
+
+        <div className="lg:h-screen lg:bg-cover lg:bg-[url('/home_background.png')] bg-ic">
+          <div className="w-full flex flex-col items-center lg:pt-10">
+            <h2 className="text-3xl text-gray-200 text-center font-bold py-4 my-4">Frequently Asked Questions</h2>
+            <FAQs items={FAQsData}></FAQs>
           </div>
+
+          {/* Mobile graphic */}
+          <div className="lg:hidden flex w-screen">
+            <Image
+              src="/home_mobile.png"
+              alt="Home background"
+              width={1080}
+              height={585}
+              quality={100}
+            />
+          </div>
+        </div>
       </div>
-      </Suspense>
-    </div >
+    </div>
   );
 }
