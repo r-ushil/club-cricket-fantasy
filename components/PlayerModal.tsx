@@ -10,7 +10,7 @@ const formatSquad = (squad: number) => {
   if (squad === 1) return "1st XI";
   if (squad === 2) return "2nd XI";
   if (squad === 3) return "3rd XI";
-  if (squad === 4) return "Women\'s";
+  if (squad === 4) return "W\'s XI";
 }
 
 const PlayerModal: React.FC<PlayerModalProps> = ({ players, onClose }) => {
