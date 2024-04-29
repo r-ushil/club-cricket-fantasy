@@ -67,6 +67,15 @@ const PlayerSelectGrid = ({ selectedPlayers, allPlayers, onSelect, onSubmit }: P
         ))}
       </div>
       {modalOpen && <PlayerModal players={selectablePlayers} onClose={handlePlayerSelect} />}
+
+      {/* Select  */}
+      <select id="countries" className="mt-6 bg-gray-500 bg-opacity-40 border border-gray-500 text-gray-300 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-1/2 p-2.5">
+        <option className="bg-gray-800 text-white" selected>Select Captain</option>
+        {selectedPlayers.map((player, i) => (
+          <option key={i} value={player?.playerid} className="bg-gray-800">{player?.name}</option>
+        ))}
+      </select>
+
       <button
         className="my-8 bg-blue-800 hover:bg-blue-700 text-gray-200 font-bold py-2 px-4 rounded"
         onClick={async () => {
