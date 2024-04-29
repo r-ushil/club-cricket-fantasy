@@ -51,11 +51,11 @@ export default function TeamDisplay({ userTeamInfo }: TeamDisplayProps) {
   return (
     <div className="bg-gradient-to-br from-black to-red-950 text-white rounded-lg shadow-lg shadow-gray-600/50 px-6 pt-4">
       <div className="flex justify-between">
-        <h1 className="lg:text-3xl text-lg font-bold text-blue-600 break-all">{teamInfo.teamname}</h1>
+        <h1 className="lg:text-3xl text-lg font-bold text-gray-200 break-all">{teamInfo.teamname}</h1>
         <p className="lg:text-2xl text-lg font-bold text-green-600">Total: {teamInfo.total}</p>
       </div>
       <div className="flex justify-between">
-        <h2 className="lg:text-xl text-lg italic text-gray-300">{teamInfo.fullname}</h2>
+        <h2 className="lg:text-xl text-lg italic text-blue-600">{teamInfo.fullname}</h2>
         <p className="lg:text-xl text-sm font-semibold text-gray-200 italic">Current GW: {currentGWPoints}</p>
       </div>
       <div className="flex justify-between lg:mt-4 mt-2 mb-2">
