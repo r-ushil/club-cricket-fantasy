@@ -8,6 +8,7 @@ interface UserTeamInfo {
   players: PlayerWithScore[];
   swaps: Swap[];
   currentGWPoints: number;
+  captainId: number;
 }
 
 interface TeamDisplayProps {
@@ -24,8 +25,8 @@ const formatSquad = (squad: number) => {
 
 export default function TeamDisplay({ userTeamInfo }: TeamDisplayProps) {
 
-  const { teamInfo, players, swaps, currentGWPoints } = userTeamInfo;
-  
+  const { teamInfo, players, swaps, currentGWPoints, captainId } = userTeamInfo;
+
 
   const swapsContent = swaps.map((swap) => (
     <li key={swap.oldplayername} className="flex items-center justify-between gap-2 text-center">
@@ -73,7 +74,10 @@ export default function TeamDisplay({ userTeamInfo }: TeamDisplayProps) {
         {players.map((player) => (
           <li key={player.playerid} className="flex items-center py-1 px-2 justify-between border rounded-md">
             <div className="flex flex-col">
-              <span className="font-semibold text-white lg:text-base text-sm">{player.name}</span>
+              <span className="font-semibold text-white lg:text-base text-sm">
+                {player.name}
+                {player.playerid === captainId ? <span className="text-yellow-600"> (C)</span> : ""}
+              </span>
               <div className="flex">
                 <span className="text-gray-400 whitespace-pre">£{player.price}m · </span>
                 <span className="text-gray-400">{formatSquad(player.squad)}</span>
@@ -81,7 +85,10 @@ export default function TeamDisplay({ userTeamInfo }: TeamDisplayProps) {
             </div>
             <div className="flex flex-col text-right">
               <span className="text-gray-300 lg:text-base text-sm font-semibold italic">Total: {player.total}</span>
-              <span className="text-blue-400 lg:text-base text-sm font-semibold ">Current GW: {player.currentgw}</span>
+              <span className="text-blue-400 lg:text-base text-sm font-semibold ">
+                Current GW: {player.currentgw}
+                {player.playerid === captainId ? <span className="text-yellow-600"> (x2)</span> : ""}
+              </span>
             </div>
           </li>
         ))}
@@ -94,6 +101,10 @@ export default function TeamDisplay({ userTeamInfo }: TeamDisplayProps) {
           <span className="text-green-400">&#8594;</span> {/* Arrow symbol for swap */}
         </div> : ""}
         {swaps.length > 0 ? swapsContent : <span className="text-gray-200">No transfers made</span>}
+        <div className="flex justify-between">
+          <span className="text-gray-400 line-through text-left">Old Captain (C)</span>
+          <span className="text-gray-200 font-semibold text-right">New Captain (C)</span>
+        </div>
       </ul>
     </div>
   )

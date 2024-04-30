@@ -120,7 +120,7 @@ export default async function SignupPage({
       { fullname: fullName, teamname: teamName, position: position }
     ]);
     console.log(data, error);
-    return redirect("/");
+    return redirect("/edit-team");
   }
 
   return (

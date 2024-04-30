@@ -161,7 +161,7 @@ const EditTeamPage = () => {
       </nav>
 
       {/* Main Content */}
-      <div className="w-full min-h-screen flex flex-col items-center bg-gradient-to-b from-gray-950 to-red-950">
+      <div className="w-full min-h-screen flex flex-col items-center bg-gradient-to-b from-blue-900 to-red-950">
         {loading ? <Loading /> : <>
           <h2 className="text-gray-300 font-bold text-3xl mt-8">EDIT TEAM</h2>
           <h2 className="text-gray-400 text-lg mt-2">Budget Remaining: <span className={`font-semibold ${selectedPrice < 80 ? "text-green-500" : "text-red-500"}`}>{`£${80 - selectedPrice}m`}</span></h2>

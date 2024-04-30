@@ -16,6 +16,7 @@ interface userTeamInfo {
   players: PlayerWithScore[];
   swaps: Swap[];
   currentGWPoints: number;
+  captainId: number;
 }
 
 const getSupabaseInfo = async () => {
@@ -27,13 +28,15 @@ const getSupabaseInfo = async () => {
     const players: PlayerWithScore[] = await getTeamPlayers(supabase, user.id);
     const swaps: Swap[] = await getSwaps(supabase, user.id);
     const teams: Team[] = await getTeams(supabase, user.id);
-    const currentGWPoints = await getCurrentGWPoints(supabase, user.id, players);
+    const captainId = await getCaptainId(supabase, user.id);
+    const currentGWPoints = await getCurrentGWPoints(supabase, players, captainId);
 
     const userTeamInfo: userTeamInfo = {
       teamInfo: teams.find(team => team.uuid === user.id)!,
       players: players,
       swaps: swaps,
       currentGWPoints: currentGWPoints,
+      captainId: captainId,
     }
 
     return { userTeamInfo, teams };
@@ -41,15 +44,13 @@ const getSupabaseInfo = async () => {
 
 }
 
-const getCurrentGWPoints = async (supabase: SupabaseClient<any, "public", any>, userId: string, players: PlayerWithScore[]): Promise<number> => {
+const getCurrentGWPoints = async (supabase: SupabaseClient<any, "public", any>, players: PlayerWithScore[], captainId: number): Promise<number> => {
 
   const { data: playersObjs } = await supabase.from("players").select("playerid, currentgw").in("playerid", players.map(player => player.playerid));
 
   if (!playersObjs || playersObjs.length === 0) {
     return 0;
   }
-
-  const captainId = await getCaptainId(supabase, userId);
 
   // double captain points
   playersObjs.forEach(player => {
