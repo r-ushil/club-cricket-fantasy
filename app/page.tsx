@@ -26,7 +26,7 @@ export default async function Index() {
 
   const FAQsData = [
     { "title": "What are the restrictions on making my team?", "content": "You'll have £80m to play with for your squad, where you'll have to select 4 players from each squad. We'll be changing up the prices of players depending on how they do in the season. Remember to choose your captain carefully!" },
-    { "title": "How are points calculated?", "content": "Batting: 1pt per run. +25pts for a half-century, +50pts for a ton. 2pts per 4, 4pts per 6. -10pts for a duck, of course.\n\nBowling: 15pts per wicket, +15pts for a 3fer, +25pts for a 5fer. \n\nFielding: 10pts for a catch, 25pts for a stumping and 15pts for a run-out." },
+    { "title": "How are points calculated?", "content": "Batting: 1pt per run. +25pts for a half-century, +50pts for a ton. 2pts per 4, 4pts per 6. -10pts for a duck, of course.\n\nBowling: 15pts per wicket, +15pts for a 3fer, +25pts for a 5fer. \n\nFielding: 10pts for a catch, 25pts for a stumping and 15pts for a run-out.\n\nCaptains get double points." },
     { "title": "What do I do if I find a bug?", "content": "Though we're absolute keyboard warriors, there's bound to be stuff that we've not got quite right. Le Fez does that to the best of us.\n\nPlease screenshot any problems you spot and send it over to Suhas or Rushil - we'll try fix it ASAP." },
     { "title": "Should I bet against the banker?", "content": "Never. Not even once." }
   ]

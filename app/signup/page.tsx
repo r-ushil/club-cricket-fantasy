@@ -104,17 +104,23 @@ export default async function SignupPage({
     } = await supabase.auth.getUser();
     console.log("user", user)
 
-    let position: number = 0;
+    let position: number = 1;
 
-    const inserted_position = await insert_zero_position(supabase);
-    if (inserted_position) {
-      position = inserted_position;
+    const { data: users } = await supabase.from('users').select('*');
+    if (!users || users.length === 0) {
+      position = 1;
     } else {
-      const appended_position = await append_zero(supabase);
-      if (appended_position) {
-        position = appended_position;
+
+      const inserted_position = await insert_zero_position(supabase);
+      if (inserted_position) {
+        position = inserted_position;
+      } else {
+        const appended_position = await append_zero(supabase);
+        if (appended_position) {
+          position = appended_position;
+        }
       }
-    }
+  }
 
     const { data, error } = await supabase.from('users').insert([
       { fullname: fullName, teamname: teamName, position: position }
