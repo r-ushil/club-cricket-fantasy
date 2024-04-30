@@ -79,7 +79,6 @@ def apply_swaps(supabase):
             print(f"Failed to update {oldplayerid} to {newplayerid} in userplayers for UUID {uuid}.")
             continue
 
-    
 def main():
     try:
         supabase = create_client(os.environ["NEXT_PUBLIC_SUPABASE_URL"], os.environ["NEXT_PUBLIC_SUPABASE_ANON_KEY"])
