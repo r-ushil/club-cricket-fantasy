@@ -20,6 +20,41 @@ def reset_currentgw(supabase):
             continue
 
 
+def set_nextcapt(supabase):
+    try:
+        fetch_response = supabase.table("users").select("id, nextcapt").neq("nextcapt", -1).execute()
+    except Exception as e:
+        print(f"Failed to fetch users from Supabase with 'nextcapt'.")
+    
+    for user in fetch_response.data:
+        uuid = user['id']
+        nextcapt = user['nextcapt']
+
+        try:
+            supabase.table('userplayers').update({
+                'captain': False
+            }).eq('uuid', uuid).eq('captain', True).execute()
+        except Exception as e:
+            print(f"Failed to set old captain to False for UUID {uuid}.")
+            continue
+
+        try:
+            supabase.table('userplayers').update({
+                'captain': True
+            }).eq('uuid', uuid).eq('playerid', nextcapt).execute()
+        except Exception as e:
+            print(f"Failed to set {nextcapt} as captain for UUID {uuid}.")
+            continue
+
+        try:
+            supabase.table('users').update({
+                'nextcapt': -1
+            }).eq('id', uuid).execute()
+        except Exception as e:
+            print(f"Failed to reset nextcapt for UUID {uuid}.")
+            continue
+
+
 def apply_swaps(supabase):
     try:
         fetch_response = supabase.table('swaps').select('*').execute()
@@ -48,8 +83,9 @@ def apply_swaps(supabase):
 def main():
     try:
         supabase = create_client(os.environ["NEXT_PUBLIC_SUPABASE_URL"], os.environ["NEXT_PUBLIC_SUPABASE_ANON_KEY"])
-        reset_currentgw(supabase)
+        reset_currentgw(supabase)        
         apply_swaps(supabase)
+        set_nextcapt(supabase)
 
         
     except Exception as e:

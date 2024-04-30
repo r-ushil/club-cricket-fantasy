@@ -7,11 +7,15 @@ import { Player } from "@/types/player";
 interface PlayerSelectGridProps {
   selectedPlayers: (Player | null)[];
   allPlayers: Player[];
+  captainPlayer: Player | null;
   onSelect: (newPlayers: (Player | null)[]) => void;
-  onSubmit: (newPlayers: Player[]) => void;
+  onSubmit: (newPlayers: Player[], captain: Player) => void;
 }
 
-const validateTeam = (selectedPlayers: (Player | null)[]) => {
+const validateTeam = (selectedPlayers: (Player | null)[], captainPlayer: (Player | null)) => {
+  if (captainPlayer === null) {
+    return false;
+  }
 
   if (selectedPlayers.some(player => player === null)) {
     return false;
@@ -34,10 +38,17 @@ const validateTeam = (selectedPlayers: (Player | null)[]) => {
 
 }
 
-const PlayerSelectGrid = ({ selectedPlayers, allPlayers, onSelect, onSubmit }: PlayerSelectGridProps) => {
+const PlayerSelectGrid = ({ selectedPlayers, allPlayers, captainPlayer, onSelect, onSubmit }: PlayerSelectGridProps) => {
   const [modalOpen, setModalOpen] = useState(false);
   const [selectablePlayers, setSelectablePlayers] = useState<Player[]>(allPlayers);
   const [selectedOldPlayerId, setSelectedOldPlayerId] = useState<number | null>(null);
+  const [captain, setCaptain] = useState<Player | null>(allPlayers.find(player => player.playerid === captainPlayer?.playerid) || null);
+
+  const handleCaptainSelect = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const playerId = event.target.value;
+    const player = allPlayers.find(player => player.playerid === parseInt(playerId)) || null;
+    setCaptain(player);
+  };
 
   useEffect(() => {
     setSelectablePlayers(allPlayers.filter(player => !selectedPlayers.includes(player)));
@@ -69,10 +80,15 @@ const PlayerSelectGrid = ({ selectedPlayers, allPlayers, onSelect, onSubmit }: P
       {modalOpen && <PlayerModal players={selectablePlayers} onClose={handlePlayerSelect} />}
 
       {/* Select  */}
-      <select id="countries" className="mt-6 bg-gray-500 bg-opacity-40 border border-gray-500 text-gray-300 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-1/2 p-2.5">
-        <option className="bg-gray-800 text-white" selected>Select Captain</option>
-        {selectedPlayers.map((player, i) => (
-          <option key={i} value={player?.playerid} className="bg-gray-800">{player?.name}</option>
+      <select
+        id="captain"
+        className="mt-6 bg-gray-500 bg-opacity-40 border border-gray-500 text-gray-300 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-1/2 p-2.5"
+        onChange={handleCaptainSelect}
+        value={ captain?.name ?? "Select Captain"}
+      >
+        <option className="bg-gray-800 text-white" value="">{captain?.name ?? "Select Captain"}</option>
+        {selectedPlayers.map((player, index) => (
+          <option key={index} value={player?.playerid} className="bg-gray-800">{player?.name}</option>
         ))}
       </select>
 
@@ -80,10 +96,10 @@ const PlayerSelectGrid = ({ selectedPlayers, allPlayers, onSelect, onSubmit }: P
         className="my-8 bg-blue-800 hover:bg-blue-700 text-gray-200 font-bold py-2 px-4 rounded"
         onClick={async () => {
           // Validate team
-          if (!validateTeam(selectedPlayers)) {
-            alert("Please ensure you have selected 4 players from each squad and that your team is under £80m.");
+          if (!validateTeam(selectedPlayers, captain)) {
+            alert("Please ensure you have selected 4 players from each squad, that your team is under £80m and a captain.");
           } else {
-            await onSubmit(selectedPlayers as Player[]);
+            await onSubmit(selectedPlayers as Player[], captain as Player);
           }
         }}
       >Confirm

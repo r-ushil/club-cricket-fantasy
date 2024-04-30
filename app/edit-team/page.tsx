@@ -5,12 +5,14 @@ import { useEffect, useState } from "react";
 import { Player } from "@/types/player";
 import Loading from "@/components/Loading";
 import BackButton from "@/components/BackButton";
+import { Team } from "@/types/team";
 
 
 const EditTeamPage = () => {
   const [currentPlayers, setCurrentPlayers] = useState<(Player | null)[]>([]);
   const [allPlayers, setAllPlayers] = useState<Player[]>([]);
   const [selectedPrice, setSelectedPrice] = useState<number>(0);
+  const [currentCaptain, setCaptain] = useState<Player | null>(null);
 
   const [loading, setLoading] = useState(true);
 
@@ -29,7 +31,7 @@ const EditTeamPage = () => {
     const { data: { user } } = await supabase.auth.getUser();
 
     const { data: allPlayers } = await supabase.from("players").select("*");
-    const { data: currentPlayerIds } = await supabase.from("userplayers").select("playerid").eq("uuid", user!.id);
+    const { data: currentPlayerIds } = await supabase.from("userplayers").select("playerid, captain").eq("uuid", user!.id);
 
     // Initialise currentPlayers array to 16 empty objects
     let currentPlayers: (Player | null)[] = [...Array(16)].map(() => (null));
@@ -39,13 +41,16 @@ const EditTeamPage = () => {
       currentPlayers = currentPlayerIds.map(row => allPlayers!.find(player => player.playerid === row.playerid) || null);
     }
 
-    return { currentPlayers, allPlayers };
+    // Set the captain player
+    const currentCaptain = currentPlayers.find(player => player?.playerid === currentPlayerIds?.find(row => row.captain)?.playerid) || null;    
+    return { currentPlayers, allPlayers, currentCaptain };
   }
 
   useEffect(() => {
     (async () => {
       await authenticateUser();
-      const { currentPlayers, allPlayers } = await getPlayers();
+      const { currentPlayers, allPlayers, currentCaptain } = await getPlayers();
+      setCaptain(currentCaptain);
       setCurrentPlayers(currentPlayers);
       setAllPlayers(allPlayers as Player[]);
       setSelectedPrice(currentPlayers.reduce((acc, player) => acc + (player?.price || 0), 0));
@@ -54,22 +59,33 @@ const EditTeamPage = () => {
     })();
   }, []);
 
-  const onTeamSubmit = async (newPlayers: Player[]) => {
+  const onTeamSubmit = async (newPlayers: Player[], captain: Player) => {
     const supabase = createClient();
     const { data: { user } } = await supabase.auth.getUser();
 
     // Get current user's player objects
-    const { data: currentUserPlayerIds } = await supabase.from("userplayers").select("playerid").eq("uuid", user!.id);
+    const { data: currentUserPlayerIds } = await supabase.from("userplayers").select("playerid, captain").eq("uuid", user!.id);
     const currentPlayerIds = currentUserPlayerIds?.map(row => row.playerid) as number[];
 
-
-
+    // Could be null, if user has no players
+    const currentCaptainPlayerId = currentUserPlayerIds?.find(row => row.captain)?.playerid as number;
     // Get the new player IDs 
     const newPlayerIds = newPlayers.map(player => player.playerid);
 
-    if (!currentPlayerIds || currentPlayerIds.length === 0) {
+
+    if ((!currentPlayerIds || currentPlayerIds.length === 0)) {
       // Add the new players to the userplayers table
-      const newPlayerRows = newPlayerIds.map(playerId => ({ uuid: user!.id, playerid: playerId }));
+      const newPlayerRows = newPlayerIds.map(playerId => ({ uuid: user!.id, playerid: playerId, captain: false }));
+
+      // For the captain player, set captain to true
+      const captainRow = newPlayerRows.find(row => row.playerid === captain.playerid);
+      if (captainRow) {
+        captainRow.captain = true;
+      } else {
+        // should never happen
+        console.error("Error: Captain player not found in newPlayerRows");
+      }
+
       try {
         await supabase.from("userplayers").insert(newPlayerRows);
         window.location.href = "/";
@@ -78,12 +94,6 @@ const EditTeamPage = () => {
         console.error("Error adding new players to userplayers table:", error);
       }
     } else {
-
-      // avoid unnecessary updates if no changes were made
-      if (currentPlayerIds.length === newPlayerIds.length && currentPlayerIds.every((playerId, i) => playerId === newPlayerIds[i])) {
-        alert("No changes were made to your team!");
-        return;
-      }
 
       // Get players that were removed
 
@@ -110,6 +120,22 @@ const EditTeamPage = () => {
       addedPlayers.forEach((playerId, i) => {
         swapRows[i].newplayerid = playerId;
       });
+
+      // Update the captain player on the user object
+      if (captain.playerid !== currentCaptainPlayerId) {
+        const { data: team } = await supabase.from("users").select("*").eq("id", user!.id).single();
+
+        const updatedTeam = {
+          ...team,
+          nextcapt: captain.playerid
+        };
+
+        try {
+          await supabase.from("users").upsert(updatedTeam);
+        } catch (error) {
+          console.error("Error updating user team:", error);
+        }
+      }
 
       // push swaps and userplayers updates to supabase
       try {
@@ -143,6 +169,7 @@ const EditTeamPage = () => {
           <PlayerSelectGrid
             selectedPlayers={currentPlayers}
             allPlayers={allPlayers}
+            captainPlayer={currentCaptain}
             onSelect={(newPlayers) => {
               setCurrentPlayers(newPlayers);
               setSelectedPrice(newPlayers.reduce((acc, player) => acc + (player?.price || 0), 0));

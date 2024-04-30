@@ -223,6 +223,8 @@ def populate_supabase(supabase, points):
         except Exception as e:
             print(f"Failed to fetch {name} from Supabase.")
             continue
+
+        
             
         new_total = fetch_response.data['total'] + current_gw
         new_gw = fetch_response.data['currentgw'] + current_gw
@@ -238,26 +240,30 @@ def populate_supabase(supabase, points):
             print(f"Failed to update {name}.")
 
         try:
-            userplayers = supabase.table('userplayers').select('uuid').eq('playerid', fetch_response.data['playerid']).execute()
+            userplayers = supabase.table('userplayers').select('uuid, captain').eq('playerid', fetch_response.data['playerid']).execute()
         except Exception as e:
             print(f"Failed to fetch uuids from userplayers in Supabase.")
             continue
 
-        for uuid in userplayers.data:
+        for userplayer in userplayers.data:
             try:
-                user = supabase.table('users').select('fullname, total').eq('id', uuid['uuid']).single().execute()
+                user = supabase.table('users').select('fullname, total').eq('id', userplayer['uuid']).single().execute()
             except Exception as e:
-                print(f"Failed to fetch {uuid['uuid']} from Supabase.")
+                print(f"Failed to fetch {userplayer['uuid']} from Supabase.")
                 continue
 
 
             fullname = user.data['fullname']
-            new_user_total = user.data['total'] + current_gw
+
+            if userplayer['captain']:
+                new_user_total = user.data['total'] + (current_gw * 2)
+            else:                       
+                new_user_total = user.data['total'] + current_gw
 
             try:
                 supabase.table('users').update({
                     'total': new_user_total
-                }).eq('id', uuid['uuid']).execute()
+                }).eq('id', userplayer['uuid']).execute()
             except Exception as e:
                 print(f"Failed to update {fullname} in Supabase.")
                 continue

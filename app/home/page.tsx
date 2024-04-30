@@ -94,6 +94,7 @@ const getTeams = async (supabase: SupabaseClient<any, "public", any>, userId: st
       total: team.total,
       position: team.position,
       form: team.form,
+      nextcapt: team.nextcapt
     }
   });
 

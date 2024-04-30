@@ -5,4 +5,5 @@ export interface Team {
   total: number;
   position: number;
   form: boolean | null;
+  nextcapt: number | null;
 }
