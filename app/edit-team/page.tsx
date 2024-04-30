@@ -13,6 +13,7 @@ const EditTeamPage = () => {
   const [allPlayers, setAllPlayers] = useState<Player[]>([]);
   const [selectedPrice, setSelectedPrice] = useState<number>(0);
   const [currentCaptain, setCaptain] = useState<Player | null>(null);
+  const [firstTeamSelection, setFirstTeamSelection] = useState<boolean>(true);
 
   const [loading, setLoading] = useState(true);
 
@@ -39,6 +40,7 @@ const EditTeamPage = () => {
     // Get current user's player objects
     if (currentPlayerIds && currentPlayerIds.length > 0) {
       currentPlayers = currentPlayerIds.map(row => allPlayers!.find(player => player.playerid === row.playerid) || null);
+      setFirstTeamSelection(false);
     }
 
     // Set the captain player
@@ -150,6 +152,8 @@ const EditTeamPage = () => {
 
   }
 
+  
+
   return (
     <div className="w-full">
       {/* NavBar */}
@@ -165,7 +169,7 @@ const EditTeamPage = () => {
         {loading ? <Loading /> : <>
           <h2 className="text-gray-300 font-bold text-3xl mt-8">EDIT TEAM</h2>
           <h2 className="text-gray-400 text-lg mt-2">Budget Remaining: <span className={`font-semibold ${selectedPrice < 80 ? "text-green-500" : "text-red-500"}`}>{`£${80 - selectedPrice}m`}</span></h2>
-          <BackButton href="/home" />
+          {firstTeamSelection ? <></> : <BackButton href="/home" />} 
           <PlayerSelectGrid
             selectedPlayers={currentPlayers}
             allPlayers={allPlayers}
