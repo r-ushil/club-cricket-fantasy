@@ -152,10 +152,10 @@ const getSwaps = async (supabase: SupabaseClient<any, "public", any>, userId: st
 }
 
 const FAQsData = [
-  { "title": "What are the restrictions on making my team?", "content": "Budget. 4 per squad." },
-  { "title": "How are points calculated?", "content": "rules" },
-  { "title": "What do I do if I find a bug?", "content": "report it" },
-  { "title": "Should I bet against the banker?", "content": "Never" }
+  { "title": "What are the restrictions on making my team?", "content": "You'll have £80m to play with for your squad, where you'll have to select 4 players from each squad. We'll be changing up the prices of players depending on how they do in the season. Remember to choose your captain carefully!" },
+  { "title": "How are points calculated?", "content": "Batting: 1pt per run. +25pts for a half-century, +50pts for a ton. 2pts per 4, 4pts per 6. -10pts for a duck, of course. Bowling: 15pts per wicket, +15pts for a 3fer, +25pts for a 5fer. Fielding: 10pts for a catch, 25pts for a stumping and 15pts for a run-out." },
+  { "title": "What do I do if I find a bug?", "content": "Though we're absolute keyboard warriors, there's bound to be stuff that we've not got quite right. Le Fez does that to the best of us. Please screenshot any problems you spot and send it over to Suhas or Rushil - we'll try fix it ASAP." },
+  { "title": "Should I bet against the banker?", "content": "Never. Not even once." }
 ]
 
 export default async function Home() {
