@@ -10,6 +10,7 @@ import NavBar from "@/components/NavBar";
 import FAQs from "@/components/FAQs";
 import Image from "next/image";
 import Announcement from "@/components/Announcement";
+import Footer from "@/components/Footer";
 
 interface userTeamInfo {
   teamInfo: Team;
@@ -184,8 +185,8 @@ export default async function Home() {
           <Leaderboard teams={teams} />
         </div>
 
-        <div className="lg:h-screen lg:bg-cover lg:bg-[url('/home_background.png')] bg-ic">
-          <div className="w-full flex flex-col items-center lg:pt-10">
+        <div className="lg:h-screen lg:bg-cover lg:bg-bottom lg:bg-[url('/home_background.png')] bg-ic">
+          <div className="w-full flex flex-col items-center">
             <h2 className="text-3xl text-gray-200 text-center font-bold py-4 my-4">Frequently Asked Questions</h2>
             <FAQs items={FAQsData}></FAQs>
           </div>
@@ -202,6 +203,7 @@ export default async function Home() {
           </div>
         </div>
       </div>
+      <Footer />
     </div>
   );
 }

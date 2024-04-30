@@ -4,6 +4,7 @@ import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import Image from "next/image";
 import { BsChevronCompactDown } from "react-icons/bs";
+import Footer from "@/components/Footer";
 
 
 const checkAuth = async () => {
@@ -29,7 +30,7 @@ export default async function Index() {
     { "title": "What do I do if I find a bug?", "content": "Though we're absolute keyboard warriors, there's bound to be stuff that we've not got quite right. Le Fez does that to the best of us.\n\nPlease screenshot any problems you spot and send it over to Suhas or Rushil - we'll try fix it ASAP." },
     { "title": "Should I bet against the banker?", "content": "Never. Not even once." }
   ]
-  
+
   return (
     <>
       {/* Fullscreen Banner */}
@@ -73,8 +74,8 @@ export default async function Index() {
 
       {/* Content below the banner */}
       <div className="flex flex-col w-full">
-        <div className="lg:h-screen lg:bg-cover lg:bg-[url('/home_background.png')] bg-ic">
-          <div className="w-full flex flex-col items-center lg:pt-10">
+        <div className="lg:h-screen lg:bg-cover lg:bg-bottom lg:bg-[url('/home_background.png')] bg-ic">
+          <div className="w-full flex flex-col items-center">
             <h2 className="text-3xl text-gray-200 text-center font-bold py-4 my-4">Frequently Asked Questions</h2>
             <FAQs items={FAQsData}></FAQs>
           </div>
@@ -90,10 +91,7 @@ export default async function Index() {
             />
           </div>
         </div>
-
-        <footer className="w-full bg-black border-t border-t-foreground/10 p-6 flex justify-center text-center text-sm">
-          <p>Powered by <span className="font-semibold">Mark Deane</span></p>
-        </footer>
+        <Footer />
       </div>
     </>
   );
