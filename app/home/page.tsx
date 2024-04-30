@@ -180,7 +180,7 @@ export default async function Home() {
       <NavBar />
       <Announcement />
       <div className="min-h-screen">
-        <div className="bg-gradient-to-b from-blue-950 to-gray-900 grid md:grid-cols-2 grid-cols-1 gap-8 px-10 pt-12 pb-10 lg:gap-16 lg:px-16 lg:pt-12 lg:pb-10">
+        <div className="bg-gradient-to-b from-blue-950 to-gray-900 grid lg:grid-cols-2 grid-cols-1 gap-8 px-4 pt-12 pb-10 lg:gap-16 lg:px-16 lg:pt-12 lg:pb-10">
           <TeamDisplay userTeamInfo={userTeamInfo} />
           <Leaderboard teams={teams} />
         </div>

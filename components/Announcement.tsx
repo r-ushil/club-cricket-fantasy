@@ -3,7 +3,7 @@ export default function Announcement() {
 
   return (
     <div className="bg-blue-900 text-white text-center py-2 px-4">
-      <p className="text-sm md:text-base">
+      <p className="text-sm lg:text-base">
         {msg}
       </p>
     </div>

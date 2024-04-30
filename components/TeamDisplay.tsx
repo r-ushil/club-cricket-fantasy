@@ -82,13 +82,13 @@ export default function TeamDisplay({ userTeamInfo }: TeamDisplayProps) {
                 {player.name === captainName ? <span className="text-yellow-600"> (C)</span> : ""}
               </span>
               <div className="flex">
-                <span className="text-gray-400 whitespace-pre">£{player.price}m · </span>
-                <span className="text-gray-400">{formatSquad(player.squad)}</span>
+                <span className="text-gray-400 whitespace-pre lg:text-base text-sm text-left">£{player.price}m · </span>
+                <span className="text-gray-400 lg:text-base text-sm text-left">{formatSquad(player.squad)}</span>
               </div>
             </div>
             <div className="flex flex-col text-right">
               <span className="text-gray-300 lg:text-base text-sm font-semibold italic">Total: {player.total}</span>
-              <span className="text-blue-400 lg:text-base text-sm font-semibold ">
+              <span className="text-blue-400 lg:text-base text-xs font-semibold ">
                 Current GW: {player.currentgw}
                 {player.name === captainName ? <span className="text-yellow-600"> (x2)</span> : ""}
               </span>

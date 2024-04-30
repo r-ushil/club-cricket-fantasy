@@ -59,7 +59,7 @@ export default async function Index() {
 
         {/* AuthButton in the top right */}
         <div className="absolute top-0 right-0 pt-2 pr-2 z-10">
-          <div className="text-sm sm:text-md md:text-lg lg:text-xl py-3 sm:py-3 md:py-4 lg:py-5 px-5 sm:px-6 md:px-8 lg:px-10">
+          <div className="text-sm sm:text-md lg:text-lg lg:text-xl py-3 sm:py-3 lg:py-4 lg:py-5 px-5 sm:px-6 lg:px-8 lg:px-10">
             <AuthButton />
           </div>
         </div>
