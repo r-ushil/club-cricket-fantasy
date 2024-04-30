@@ -5,7 +5,6 @@ import { useEffect, useState } from "react";
 import { Player } from "@/types/player";
 import Loading from "@/components/Loading";
 import BackButton from "@/components/BackButton";
-import { Team } from "@/types/team";
 
 
 const EditTeamPage = () => {
