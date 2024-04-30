@@ -30,7 +30,7 @@ const FAQs: React.FC<FAQsProps> = ({ items }) => {
             {item.title}
           </button>
           {activeIndex === index && (
-            <div className="p-4 border border-gray-700 rounded">
+            <div className="p-4 border border-gray-700 whitespace-pre-wrap rounded">
               <p>{item.content}</p>
             </div>
           )}
