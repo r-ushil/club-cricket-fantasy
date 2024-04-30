@@ -27,6 +27,12 @@ const getSupabaseInfo = async () => {
   if (!user) {
     return redirect("/login");
   } else {
+    const { data: userExists } = await supabase.from("users").select("*").eq("id", user.id).single();
+
+    if (!userExists || userExists.length === 0) {
+      return redirect("/signup");
+    }
+
     const players: PlayerWithScore[] = await getTeamPlayers(supabase, user.id);
     const swaps: Swap[] = await getSwaps(supabase, user.id);
     const teams: Team[] = await getTeams(supabase, user.id);
