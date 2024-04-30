@@ -52,6 +52,9 @@ const PlayerSelectGrid = ({ selectedPlayers, allPlayers, captainPlayer, onSelect
 
   useEffect(() => {
     setSelectablePlayers(allPlayers.filter(player => !selectedPlayers.includes(player)));
+    if (captain !== null && !selectedPlayers.includes(captain)) {
+      setCaptain(null);
+    }
   }, [modalOpen]);
 
   const handlePlayerSelect = (playerId: number | null) => {
@@ -84,14 +87,17 @@ const PlayerSelectGrid = ({ selectedPlayers, allPlayers, captainPlayer, onSelect
         id="captain"
         className="mt-6 bg-gray-500 bg-opacity-40 border border-gray-500 text-gray-300 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-1/2 p-2.5"
         onChange={handleCaptainSelect}
-        value={ captain?.name ?? "Select Captain"}
+        value={captain?.playerid}
       >
-        <option className="bg-gray-800 text-white" value="">{captain?.name ?? "Select Captain"}</option>
+        <option className="bg-gray-800 text-white" value="">
+          Select Captain
+        </option>
         {selectedPlayers.map((player, index) => (
-          <option key={index} value={player?.playerid} className="bg-gray-800">{player?.name}</option>
+          <option key={index} value={player?.playerid} className="bg-gray-800">
+            {player?.name}
+          </option>
         ))}
-      </select>
-
+    </select>
       <button
         className="my-8 bg-blue-800 hover:bg-blue-700 text-gray-200 font-bold py-2 px-4 rounded"
         onClick={async () => {
