@@ -24,13 +24,13 @@ const FAQs: React.FC<FAQsProps> = ({ items }) => {
           <button
             type="button"
             onClick={() => handleClick(index)}
-            className={`w-full p-4 text-left focus:outline-none ${activeIndex === index ? "bg-gray-800" : "bg-gray-800"
+            className={`w-full p-4 text-left text-white focus:outline-none ${activeIndex === index ? "bg-gray-800" : "bg-gray-800"
               }`}
           >
             {item.title}
           </button>
           {activeIndex === index && (
-            <div className="p-4 border border-gray-700 whitespace-pre-wrap rounded">
+            <div className="p-4 border border-gray-700 text-white whitespace-pre-wrap rounded">
               <p>{item.content}</p>
             </div>
           )}

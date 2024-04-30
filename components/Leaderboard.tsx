@@ -40,7 +40,7 @@ export default function TeamDisplay({ teams }: LeaderboardProps) {
           <li key={team.uuid} className="grid lg:grid-cols-[50px_250px_50px] grid-cols-[40px_130px_40px] items-center py-1 px-2 justify-between border rounded-md">
             <div className="flex items-center">
               {getFormIcon(team.form)}
-              <span className="font-semibold ml-2 text-center lg:text-base text-sm">{team.position}</span>
+              <span className="font-semibold ml-2 text-white text-center lg:text-base text-sm">{team.position}</span>
             </div>
             <div className="flex flex-col px-2 text-left">
               <span className="font-bold lg:text-base text-sm text-white">{team.teamname}</span>

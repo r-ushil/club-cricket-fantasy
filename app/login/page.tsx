@@ -103,22 +103,22 @@ export default function Login({
         Back
       </Link>
 
-      <div className="flex flex-col items-center lg:mt-20 mt-40">
+      <div className="flex flex-col items-center lg:mt-20 mt-24">
         <form className="animate-in flex flex-col justify-center gap-2 text-foreground bg-gray-900 bg-opacity-70 rounded-lg p-5">
-          <label className="text-md" htmlFor="email">
+          <label className="text-base text-white" htmlFor="email">
             Email
           </label>
           <input
-            className="rounded-md px-4 py-2 bg-inherit border mb-6"
+            className="rounded-md px-4 py-2 bg-inherit border mb-6 text-white"
             name="email"
             placeholder="you@example.com"
             required
           />
-          <label className="text-md" htmlFor="password">
+          <label className="text-base text-white" htmlFor="password">
             Password
           </label>
           <input
-            className="rounded-md px-4 py-2 bg-inherit border mb-6"
+            className="rounded-md px-4 py-2 bg-inherit border mb-6 text-white"
             type="password"
             name="password"
             placeholder="••••••••"
@@ -126,21 +126,21 @@ export default function Login({
           />
           <SubmitButton
             formAction={signIn}
-            className="bg-blue-700 rounded-md px-4 py-2 text-foreground mb-2"
+            className="bg-blue-700 text-white rounded-md px-4 py-2 text-foreground mb-2"
             pendingText="Signing In..."
           >
             Sign In
           </SubmitButton>
           <SubmitButton
             formAction={signUp}
-            className="border border-foreground/20 rounded-md px-4 py-2 text-foreground mb-2"
+            className="border border-foreground/20 text-white rounded-md px-4 py-2 text-foreground mb-2"
             pendingText="Signing Up..."
           >
             Sign Up
           </SubmitButton>
           {searchParams?.message && (
             <div className="flex justify-center">
-              <p className="mt-4 p-4 bg-foreground/10 text-foreground text-center w-70vw max-w-full overflow-hidden">
+              <p className="mt-4 p-4 bg-foreground/10 text-foreground text-white text-center w-70vw max-w-full overflow-hidden">
                 {searchParams.message}
               </p>
             </div>

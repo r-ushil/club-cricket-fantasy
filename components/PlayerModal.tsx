@@ -35,7 +35,7 @@ const PlayerModal: React.FC<PlayerModalProps> = ({ players, onClose }) => {
           {filteredPlayers.map(player => (
             <div
               key={player.playerid}
-              className={`p-2 mb-1 ${selectedPlayerId === player.playerid ? 'bg-blue-800' : 'bg-black'} hover:bg-blue-800 cursor-pointer`}
+              className={`p-2 mb-1 ${selectedPlayerId === player.playerid ? 'bg-blue-800' : 'bg-black'} hover:bg-blue-800 cursor-pointer text-white`}
               onClick={() => {
                 console.log("Selecting player:", player.playerid)
                 setSelectedPlayerId(player.playerid)

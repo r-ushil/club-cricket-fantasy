@@ -64,7 +64,7 @@ export default function TeamDisplay({ userTeamInfo }: TeamDisplayProps) {
         <p className="lg:text-xl text-sm font-semibold text-gray-200 italic">Current GW: {currentGWPoints}</p>
       </div>
       <div className="flex justify-between lg:mt-4 mt-2 mb-2">
-        <h4 className="lg:text-xl text-base font-semibold">Team</h4>
+        <h4 className="lg:text-xl text-base text-white font-semibold">Team</h4>
         <button
           type="button"
           className="text-blue-500 border border-blue-700 rounded-lg text-sm px-4 py-1 text-center hover:text-white hover:bg-blue-600"

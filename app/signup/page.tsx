@@ -148,29 +148,29 @@ export default async function SignupPage({
           className="lg:hidden flex"
         />
 
-      <div className="flex flex-col items-center lg:mt-20 mt-40">
+      <div className="flex flex-col items-center lg:mt-20 mt-24">
         <form className="animate-in flex flex-col justify-center gap-2 text-foreground bg-gray-900 bg-opacity-70 rounded-lg p-5">
-          <label className="text-md" htmlFor="fullName">
+          <label className="text-base text-white" htmlFor="fullName">
             Full Name
           </label>
           <input
-            className="rounded-md px-4 py-2 bg-inherit border mb-6"
+            className="rounded-md px-4 py-2 bg-inherit border mb-6 text-white"
             name="fullName"
             placeholder="Simon Animal"
             required
           />
-          <label className="text-md" htmlFor="teamName">
+          <label className="text-base white" htmlFor="teamName">
             Team Name
           </label>
           <input
-            className="rounded-md px-4 py-2 bg-inherit border mb-6"
+            className="rounded-md px-4 py-2 bg-inherit border mb-6 text-white"
             type="text"
             name="teamName"
             placeholder="The Mighty 3s"
             required
           />
          <SubmitButton
-          className="py-2 px-4 rounded-md no-underline bg-btn-background hover:bg-btn-background-hover"
+          className="py-2 px-4 text-white rounded-md no-underline bg-btn-background hover:bg-btn-background-hover"
           formAction={handleSubmit}
           pendingText="Creating account..."
         >
@@ -178,7 +178,7 @@ export default async function SignupPage({
         </SubmitButton>
         {searchParams?.message && (
             <div className="flex justify-center">
-              <p className="mt-4 p-4 bg-foreground/10 text-foreground text-center w-70vw max-w-full overflow-hidden">
+              <p className="mt-4 p-4 bg-foreground/10 text-white text-foreground text-center w-70vw max-w-full overflow-hidden">
                 {searchParams.message}
               </p>
             </div>
