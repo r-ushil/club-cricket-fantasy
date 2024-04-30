@@ -27,13 +27,13 @@ const getSupabaseInfo = async () => {
     const players: PlayerWithScore[] = await getTeamPlayers(supabase, user.id);
     const swaps: Swap[] = await getSwaps(supabase, user.id);
     const teams: Team[] = await getTeams(supabase, user.id);
-    const currentGWPoints = await getCurrentGWPoints(supabase, players);
+    const currentGWPoints = await getCurrentGWPoints(supabase, user.id, players);
 
     const userTeamInfo: userTeamInfo = {
       teamInfo: teams.find(team => team.uuid === user.id)!,
       players: players,
       swaps: swaps,
-      currentGWPoints: currentGWPoints
+      currentGWPoints: currentGWPoints,
     }
 
     return { userTeamInfo, teams };
@@ -41,13 +41,22 @@ const getSupabaseInfo = async () => {
 
 }
 
-const getCurrentGWPoints = async (supabase: SupabaseClient<any, "public", any>, players: PlayerWithScore[]): Promise<number> => {
+const getCurrentGWPoints = async (supabase: SupabaseClient<any, "public", any>, userId: string, players: PlayerWithScore[]): Promise<number> => {
 
-  const { data: playersObjs } = await supabase.from("players").select("currentgw").in("playerid", players.map(player => player.playerid));
+  const { data: playersObjs } = await supabase.from("players").select("playerid, currentgw").in("playerid", players.map(player => player.playerid));
 
   if (!playersObjs || playersObjs.length === 0) {
     return 0;
   }
+
+  const captainId = await getCaptainId(supabase, userId);
+
+  // double captain points
+  playersObjs.forEach(player => {
+    if (player.playerid === captainId) {
+      player.currentgw *= 2;
+    }
+  });
 
   const points = playersObjs.reduce((acc, player) => acc + player.currentgw, 0);
 
@@ -79,7 +88,6 @@ const getTeamPlayers = async (supabase: SupabaseClient<any, "public", any>, user
     }
   });
 
-
   return playersArray;
 }
 
@@ -100,6 +108,17 @@ const getTeams = async (supabase: SupabaseClient<any, "public", any>, userId: st
 
   return teamsArray;
 }
+
+const getCaptainId = async (supabase: SupabaseClient<any, "public", any>, userId: string): Promise<number> => {
+  const { data: captainId } = await supabase.from("userplayers").select("playerid").eq("uuid", userId).eq("captain", true).single();
+
+  if (!captainId || captainId === null) {
+    return -1;
+  }
+
+  return captainId.playerid;
+}
+
 
 const getSwaps = async (supabase: SupabaseClient<any, "public", any>, userId: string): Promise<Swap[]> => {
   const { data: swaps } = await supabase.from("swaps").select("oldplayerid, newplayerid").eq("uuid", userId);

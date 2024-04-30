@@ -25,6 +25,7 @@ const formatSquad = (squad: number) => {
 export default function TeamDisplay({ userTeamInfo }: TeamDisplayProps) {
 
   const { teamInfo, players, swaps, currentGWPoints } = userTeamInfo;
+  
 
   const swapsContent = swaps.map((swap) => (
     <li key={swap.oldplayername} className="flex items-center justify-between gap-2 text-center">
