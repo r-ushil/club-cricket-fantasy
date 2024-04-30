@@ -84,7 +84,7 @@ export default function Login({
       />
       <Link
         href="/"
-        className="absolute left-8 top-8 py-2 px-4 rounded-md no-underline text-foreground bg-btn-background hover:bg-btn-background-hover flex items-center group text-sm"
+        className="absolute left-8 top-8 py-2 px-4 rounded-md no-underline text-foreground bg-gray-900 hover:bg-gray-700 flex items-center group text-sm"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
