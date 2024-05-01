@@ -246,6 +246,10 @@ def populate_supabase(supabase, points):
             print(f"Failed to fetch uuids from userplayers in Supabase.")
             continue
 
+        # create a set of (fullnames, name) to check for duplicates
+
+        fullnames = set()
+
         for userplayer in userplayers.data:
             try:
                 user = supabase.table('users').select('fullname, total').eq('id', userplayer['uuid']).single().execute()
@@ -255,6 +259,11 @@ def populate_supabase(supabase, points):
 
 
             fullname = user.data['fullname']
+
+            if (fullname, name) in fullnames:
+                print("Duplicate team ffs!")
+            else:
+                fullnames.add((fullname, name))
 
             if userplayer['captain']:
                 new_user_total = user.data['total'] + (current_gw * 2)
@@ -295,16 +304,17 @@ def main():
 
         supabase = create_client(os.environ["NEXT_PUBLIC_SUPABASE_URL"], os.environ["NEXT_PUBLIC_SUPABASE_ANON_KEY"])
 
-        # get initial positions
-        try:
-            initial_positions_resp = supabase.table('users').select('id, total, position, form').execute()
-        except Exception as e:
-            print(f"Failed to fetch positions from Supabase.")
-            return
+        
 
         for match_id in matches:
             # if match_already_processed(match_id):
             #     continue
+            # get initial positions
+            try:
+                initial_positions_resp = supabase.table('users').select('id, total, position, form').execute()
+            except Exception as e:
+                print(f"Failed to fetch positions from Supabase.")
+                return
 
             print(f"Match ID: {match_id}")
             both_innings = fetch_both_innings(api_key, match_id)
@@ -313,14 +323,14 @@ def main():
             populate_supabase(supabase, points)
             mark_match_as_processed(match_id)
 
-        # get post positions
-        try:
-            post_positions_resp = supabase.table('users').select('id, total, position, form').execute()
-        except Exception as e:
-            print(f"Failed to fetch post-total positions from Supabase.")
-            return
-        
-        calculate_positions(supabase, initial_positions_resp.data, post_positions_resp.data)
+            # get post positions
+            try:
+                post_positions_resp = supabase.table('users').select('id, total, position, form').execute()
+            except Exception as e:
+                print(f"Failed to fetch post-total positions from Supabase.")
+                return
+            
+            calculate_positions(supabase, initial_positions_resp.data, post_positions_resp.data)
         
     except Exception as e:
         print(f"An error occurred: {e}")
