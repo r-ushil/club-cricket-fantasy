@@ -108,7 +108,7 @@ const EditTeamPage = () => {
       }
 
       // More than 2 players were swapped
-      if (removedPlayers.length > 16 && addedPlayers.length > 16) {
+      if (removedPlayers.length > 2 && addedPlayers.length > 2) {
 
         const removedPlayersNames = removedPlayers.map(playerId => allPlayers.find(player => player.playerid === playerId)?.name);
         const addedPlayersNames = addedPlayers.map(playerId => allPlayers.find(player => player.playerid === playerId)?.name);
