@@ -159,7 +159,7 @@ export default async function SignupPage({
             placeholder="Simon Animal"
             required
           />
-          <label className="text-base white" htmlFor="teamName">
+          <label className="text-base text-white" htmlFor="teamName">
             Team Name
           </label>
           <input
