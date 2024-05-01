@@ -127,10 +127,20 @@ def get_batting_points(batting_innings):
         elif runs >= 50:
             points += 25 + POINTS_PER_50
 
-        fours = int(batter["fours"])
+        fours = batter["fours"]
+        if fours == "":
+            fours = 0
+        else:
+            fours = int(fours)
+
         points += fours * POINTS_PER_FOUR
 
-        sixes = int(batter["sixes"])
+        sixes = batter["sixes"]
+        if sixes == "":
+            sixes = 0
+        else:
+            sixes = int(sixes)
+
         points += sixes * POINTS_PER_SIX
 
         batters[name] = points
@@ -193,8 +203,6 @@ def calculate_positions(supabase, pre_total_update, post_total_update):
             'form': form
         })
 
-    print(new_positions_and_form)
-
     for item in new_positions_and_form:
         try:
             supabase.table('users').update({
@@ -209,13 +217,6 @@ def calculate_positions(supabase, pre_total_update, post_total_update):
 
 
 def populate_supabase(supabase, points):
-    
-    try:
-        initial_positions_resp = supabase.table('users').select('id, total, position, form').execute()
-    except Exception as e:
-        print(f"Failed to fetch positions from Supabase.")
-        return
-    
    
     for name, current_gw in points.items():
         try:
@@ -268,15 +269,10 @@ def populate_supabase(supabase, points):
                 print(f"Failed to update {fullname} in Supabase.")
                 continue
 
-        
-    try:
-        post_positions_resp = supabase.table('users').select('id, total, position, form').execute()
-    except Exception as e:
-        print(f"Failed to fetch post-total positions from Supabase.")
-        return
-    
-    calculate_positions(supabase, initial_positions_resp.data, post_positions_resp.data)
-
+# return match ids from file as list of strings without newline characters
+def get_matches_from_file():
+    with open('/app/matches', 'r') as f:
+        return [str(line.strip()) for line in f]
     
 def match_already_processed(match_id):
     with open('/app/processed_matches', 'r') as f:
@@ -293,12 +289,22 @@ def main():
     site_id = os.environ["SITE_ID"]
 
     try:
-        matches = get_matches(api_key, site_id)
+        # matches = get_matches(api_key, site_id)
+        # getting matches from file instead of API
+        matches = get_matches_from_file()
+
         supabase = create_client(os.environ["NEXT_PUBLIC_SUPABASE_URL"], os.environ["NEXT_PUBLIC_SUPABASE_ANON_KEY"])
 
+        # get initial positions
+        try:
+            initial_positions_resp = supabase.table('users').select('id, total, position, form').execute()
+        except Exception as e:
+            print(f"Failed to fetch positions from Supabase.")
+            return
+
         for match_id in matches:
-            if match_already_processed(match_id):
-                continue
+            # if match_already_processed(match_id):
+            #     continue
 
             print(f"Match ID: {match_id}")
             both_innings = fetch_both_innings(api_key, match_id)
@@ -306,6 +312,15 @@ def main():
             print(points)
             populate_supabase(supabase, points)
             mark_match_as_processed(match_id)
+
+        # get post positions
+        try:
+            post_positions_resp = supabase.table('users').select('id, total, position, form').execute()
+        except Exception as e:
+            print(f"Failed to fetch post-total positions from Supabase.")
+            return
+        
+        calculate_positions(supabase, initial_positions_resp.data, post_positions_resp.data)
         
     except Exception as e:
         print(f"An error occurred: {e}")
