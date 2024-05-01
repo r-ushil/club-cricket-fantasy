@@ -33,19 +33,29 @@ const getSupabaseInfo = async () => {
       return redirect("/signup");
     }
 
-    const players: PlayerWithScore[] = await getTeamPlayers(supabase, user.id);
-    const swaps: Swap[] = await getSwaps(supabase, user.id);
-    const teams: Team[] = await getTeams(supabase, user.id);
-    const {captainName, newCaptainName} = await getCaptainName(supabase, user.id);
-    const currentGWPoints = await getCurrentGWPoints(supabase, players, captainName);
+    type UserQueriesResult = [PlayerWithScore[], Swap[], Team[], {
+      captainName: string;
+      newCaptainName: string | null;
+    }];
+  
+    const userQueries: Promise<UserQueriesResult> = Promise.all([
+        getTeamPlayers(supabase, user.id),
+        getSwaps(supabase, user.id),
+        getTeams(supabase, user.id),
+        getCaptainName(supabase, user.id)
+    ]);
+  
+    const [players, swaps, teams, captainData] = await userQueries as UserQueriesResult;
+  
+    const currentGWPoints = await getCurrentGWPoints(supabase, players, captainData.captainName);
 
     const userTeamInfo: userTeamInfo = {
       teamInfo: teams.find(team => team.uuid === user.id)!,
       players: players,
       swaps: swaps,
       currentGWPoints: currentGWPoints,
-      captainName: captainName,
-      newCaptainName: newCaptainName
+      captainName: captainData.captainName,
+      newCaptainName: captainData.newCaptainName
     }
 
     return { userTeamInfo, teams };
