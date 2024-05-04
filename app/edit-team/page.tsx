@@ -107,13 +107,13 @@ const EditTeamPage = () => {
         return;
       }
 
-      // More than 2 players were swapped
-      if (removedPlayers.length > 2 && addedPlayers.length > 2) {
+      // More than 3 players were swapped
+      if (removedPlayers.length > 3 && addedPlayers.length > 3) {
 
         const removedPlayersNames = removedPlayers.map(playerId => allPlayers.find(player => player.playerid === playerId)?.name);
         const addedPlayersNames = addedPlayers.map(playerId => allPlayers.find(player => player.playerid === playerId)?.name);
 
-        alert("You can only swap 2 players from your previous team. Currently removed players are: " + removedPlayersNames + ". Added players are: " + addedPlayersNames);
+        alert("You can only swap 3 players from your previous team. Currently removed players are: " + removedPlayersNames + ". Added players are: " + addedPlayersNames);
         return;
       }
 
