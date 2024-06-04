@@ -123,9 +123,9 @@ def get_batting_points(batting_innings):
             points = runs * POINTS_PER_RUN
 
         if runs >= 100:
-            points += 50 + POINTS_PER_100
+            points += POINTS_PER_100
         elif runs >= 50:
-            points += 25 + POINTS_PER_50
+            points += POINTS_PER_50
 
         fours = batter["fours"]
         if fours == "":
