@@ -76,7 +76,7 @@ export default async function Index() {
       <div className="flex flex-col w-full">
         <div className="lg:h-screen lg:bg-cover lg:bg-bottom lg:bg-[url('/home_background.png')] bg-ic">
           <div className="w-full flex flex-col items-center">
-            <h2 className="text-3xl text-gray-200 text-center font-bold py-4 my-4">Frequently Asked Questions</h2>
+            <h2 className="text-3xl text-gray-200 text-center font-bold py-4 my-4">FAQs</h2>
             <FAQs items={FAQsData}></FAQs>
           </div>
 
