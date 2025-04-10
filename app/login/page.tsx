@@ -104,7 +104,7 @@ export default function Login({
       </Link>
 
       <div className="flex flex-col items-center lg:mt-20 mt-24">
-        <form className="animate-in flex flex-col justify-center gap-2 text-foreground bg-gray-900 bg-opacity-70 rounded-lg p-5">
+        <form className="animate-in flex flex-col justify-center gap-2 text-foreground bg-gray-900 bg-opacity-70 rounded-lg p-5 lg:w-1/3">
           <label className="text-base text-white" htmlFor="email">
             Email
           </label>
