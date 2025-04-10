@@ -43,7 +43,7 @@ const EditTeamPage = () => {
     }
 
     // Set the captain player
-    const currentCaptain = currentPlayers.find(player => player?.playerid === currentPlayerIds?.find(row => row.captain)?.playerid) || null;    
+    const currentCaptain = currentPlayers.find(player => player?.playerid === currentPlayerIds?.find(row => row.captain)?.playerid) || null;
     return { currentPlayers, allPlayers, currentCaptain };
   }
 
@@ -151,7 +151,6 @@ const EditTeamPage = () => {
 
   }
 
-  
 
   return (
     <div className="w-full">
@@ -164,11 +163,11 @@ const EditTeamPage = () => {
       </nav>
 
       {/* Main Content */}
-      <div className="w-full min-h-screen flex flex-col items-center bg-gradient-to-b from-blue-900 to-red-950">
+      <div className="w-full min-h-screen flex flex-col items-center bg-gradient-to-br from-ic-dark to-red-950 text-white">
         {loading ? <Loading /> : <>
           <h2 className="text-gray-300 font-bold text-3xl mt-8">EDIT TEAM</h2>
           <h2 className="text-gray-400 text-lg mt-2">Budget Remaining: <span className={`font-semibold ${selectedPrice < 80 ? "text-green-500" : "text-red-500"}`}>{`£${80 - selectedPrice}m`}</span></h2>
-          {firstTeamSelection ? <></> : <BackButton href="/home" />} 
+          {firstTeamSelection ? <></> : <BackButton href="/home" />}
           <PlayerSelectGrid
             selectedPlayers={currentPlayers}
             allPlayers={allPlayers}

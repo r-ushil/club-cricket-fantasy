@@ -198,7 +198,7 @@ export default async function Home() {
       <NavBar />
       <Announcement />
       <div className="min-h-screen">
-        <div className="flex bg-gradient-to-b from-blue-950 to-gray-900 px-4 pt-12 pb-10 lg:px-16 lg:pt-12 lg:pb-10">
+        <div className="flex bg-ic px-4 pt-6 lg:px-16 lg:pt-12">
           <HomeTabs userTeamInfo={userTeamInfo} teams={teams} />
         </div>
 

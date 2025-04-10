@@ -97,13 +97,13 @@ const PlayerSelectGrid = ({ selectedPlayers, allPlayers, captainPlayer, onSelect
             {player?.name}
           </option>
         ))}
-    </select>
+      </select>
       <button
         className="my-8 bg-blue-800 hover:bg-blue-700 text-gray-200 font-bold py-2 px-4 rounded"
         onClick={async () => {
           // Validate team
           if (!validateTeam(selectedPlayers, captain)) {
-            alert("Please ensure you have selected 4 players from each squad, that your team is under £80m and a captain.");
+            alert("Please ensure you have selected 4 players from each squad, that your team is under £80m and has a captain.");
           } else {
             await onSubmit(selectedPlayers as Player[], captain as Player);
           }

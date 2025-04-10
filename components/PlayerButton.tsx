@@ -35,7 +35,7 @@ const PlayerButton: React.FC<PlayerButtonProps> = ({ onClick, player = null }) =
       >
         <TshirtIcon shirtText={shirtText} selected={selected} />
       </button>
-      <span className="bg-gray-900 px-2 py-1 rounded-lg text-xs text-white z-10 -mt-2">{name}</span>
+      <span className="bg-gray-900 px-2 py-1 rounded-lg text-xs text-white z-10 -mt-1">{name}</span>
       {player && <span className="bg-yellow-800 px-2 rounded-md text-xs text-white z-0 ">£{player.price}m</span>}
     </div>
   );

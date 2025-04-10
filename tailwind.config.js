@@ -14,7 +14,8 @@ module.exports = {
   				background: 'hsl(var(--btn-background))',
   				'background-hover': 'hsl(var(--btn-background-hover))'
   			},
-  			ic: '#041a43',
+  			ic: '#031943',
+			'ic-dark': '#020F23',
   			card: {
   				DEFAULT: 'hsl(var(--card))',
   				foreground: 'hsl(var(--card-foreground))'
