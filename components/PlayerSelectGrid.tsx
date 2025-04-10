@@ -82,10 +82,11 @@ const PlayerSelectGrid = ({ selectedPlayers, allPlayers, captainPlayer, onSelect
       </div>
       {modalOpen && <PlayerModal players={selectablePlayers} onClose={handlePlayerSelect} />}
 
+      <label htmlFor="captain" className="mt-6 text-gray-200 font-bold">Captain</label>
       {/* Select  */}
       <select
         id="captain"
-        className="mt-6 bg-gray-500 bg-opacity-40 border border-gray-500 text-gray-300 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-1/2 p-2.5"
+        className="mt-2 bg-gray-500 bg-opacity-40 border border-gray-500 text-gray-300 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-1/2 p-2.5"
         onChange={handleCaptainSelect}
         value={captain?.playerid}
       >

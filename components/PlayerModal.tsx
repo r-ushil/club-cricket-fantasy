@@ -1,5 +1,9 @@
 import React, { useState } from 'react';
 import { Player } from '@/types/player';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from './ui/dialog';
+import { ScrollArea } from './ui/scroll-area';
+import { Button } from './ui/button';
+import { Input } from './ui/input';
 
 interface PlayerModalProps {
   players: Player[];
@@ -22,48 +26,46 @@ const PlayerModal: React.FC<PlayerModalProps> = ({ players, onClose }) => {
     .sort((a, b) => a.name.localeCompare(b.name));
 
   return (
-    <div className="fixed inset-0 bg-gray-800 bg-opacity-50 overflow-y-auto h-full w-full flex justify-center items-center z-20">
-      <div className="bg-black p-5 rounded-lg shadow max-w-md w-full m-4">
-        <input
-          type="text"
+    <Dialog open={true} onOpenChange={() => onClose(null)}>
+      <DialogContent className="bg-black text-white max-w-md w-5/6 p-4 rounded-2xl shadow-2xl border border-gray-800">
+        <DialogHeader>
+          <DialogTitle className="text-white">Select Player</DialogTitle>
+        </DialogHeader>
+        <Input
           placeholder="Search by name..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="mb-4 p-2 w-full border rounded bg-gray-700 text-white"
+          className="mb-2 bg-gray-900 text-white placeholder-gray-500 border border-gray-700 focus-visible:ring-blue-500"
         />
-        <div className="overflow-y-auto max-h-60">
-          {filteredPlayers.map(player => (
-            <div
-              key={player.playerid}
-              className={`p-2 mb-1 ${selectedPlayerId === player.playerid ? 'bg-blue-800' : 'bg-black'} hover:bg-blue-800 cursor-pointer text-white`}
-              onClick={() => {
-                console.log("Selecting player:", player.playerid)
-                setSelectedPlayerId(player.playerid)
-              }
-              }
-            >
-              <p className="text-gray-100 font-semibold">{player.name}</p>
-              <p>
-                <span className="text-gray-500">Price: £{player.price}m. </span>
-                <span className="text-gray-500">{formatSquad(player.squad)}</span>
-              </p>
-            </div>
-          ))}
-        </div>
-        <button
-          className="mt-4 bg-blue-500 hover:bg-blue-700 text-black font-bold py-2 px-4 rounded"
+        <ScrollArea className="max-h-64 pr-2">
+          <div className="space-y-1">
+            {filteredPlayers.map((player) => (
+              <div
+                key={player.playerid}
+                className={`px-3 py-2 rounded-lg text-sm cursor-pointer transition-colors border border-transparent ${selectedPlayerId === player.playerid
+                  ? "bg-blue-600"
+                  : "bg-gray-900 hover:bg-gray-800"
+                  }`}
+                onClick={() => setSelectedPlayerId(player.playerid)}
+              >
+                <div className="flex justify-between items-center">
+                  <span className="font-medium">{player.name}</span>
+                  <span className="text-xs text-gray-400">
+                    £{player.price}m • {formatSquad(player.squad)}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </ScrollArea>
+        <Button
+          // className="bg- hover:bg-blue-500 text-white"
           onClick={() => onClose(selectedPlayerId)}
         >
           Submit
-        </button>
-        <button
-          className="mt-4 ml-2 bg-gray-500 hover:bg-gray-700 text-black font-bold py-2 px-4 rounded"
-          onClick={() => onClose(null)}
-        >
-          Close
-        </button>
-      </div>
-    </div >
+        </Button>
+      </DialogContent>
+    </Dialog>
   );
 };
 
