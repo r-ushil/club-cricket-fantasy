@@ -1,119 +1,165 @@
-"use client";
-import { Team } from "@/types/team";
-import { Swap } from "@/types/swap";
-import { PlayerWithScore } from "@/types/player";
+"use client"
+
+import { Team } from "@/types/team"
+import { Swap } from "@/types/swap"
+import { PlayerWithScore } from "@/types/player"
+import { Button } from "@/components/ui/button"
+import { ScrollArea } from "@/components/ui/scroll-area"
+import { Card, CardContent } from "@/components/ui/card"
+import { Crown, ArrowRightLeft, Users } from "lucide-react"
+import { motion } from "framer-motion"
 
 interface UserTeamInfo {
-  teamInfo: Team;
-  players: PlayerWithScore[];
-  swaps: Swap[];
-  currentGWPoints: number;
-  captainName: string;
-  newCaptainName: string | null;
+  teamInfo: Team
+  players: PlayerWithScore[]
+  swaps: Swap[]
+  currentGWPoints: number
+  captainName: string
+  newCaptainName: string | null
 }
 
 interface TeamDisplayProps {
-  userTeamInfo: UserTeamInfo;
+  userTeamInfo: UserTeamInfo
 }
 
 const formatSquad = (squad: number) => {
-  if (squad === 1) return "1st XI";
-  if (squad === 2) return "2nd XI";
-  if (squad === 3) return "3rd XI";
-  if (squad === 4) return "W\'s XI";
+  return ["", "1st XI", "2nd XI", "3rd XI", "W's XI"][squad] || ""
 }
 
+// Animation presets
+const fadeUp = {
+  hidden: { opacity: 0, y: 20 },
+  visible: (i: number) => ({
+    opacity: 1,
+    y: 0,
+    transition: { delay: i * 0.05 }
+  })
+}
 
 export default function TeamDisplay({ userTeamInfo }: TeamDisplayProps) {
-
-  const { teamInfo, players, swaps, currentGWPoints, captainName, newCaptainName } = userTeamInfo;
-
-  const captainTransfer = (newCaptainName !== null && captainName !== newCaptainName);
-
-
-  const swapsContent = swaps.map((swap) => (
-    <li key={swap.oldplayername} className="flex items-center justify-between gap-2 text-center">
-      {/* Desktop transfers display */}
-      <div className="lg:flex hidden">
-        <span className="lg:mr-4 mr-2 text-gray-400">{swap.oldplayername}</span>
-        <span className="text-red-400">&#8594;</span> {/* Arrow symbol for swap */}
-      </div>
-      <div className="lg:flex hidden">
-        <span className="lg:mr-4 mr-2 text-gray-200">{swap.newplayername}</span>
-        <span className="text-green-400">&#8594;</span> {/* Arrow symbol for swap */}
-      </div>
-
-      {/* Mobile transfers display */}
-      <div className="lg:hidden flex flex-col overflow-hidden">
-        <span className="lg:mr-4 mr-auto text-gray-400">{swap.oldplayername}</span>
-      </div>
-      <div className="lg:hidden flex flex-col overflow-hidden">
-        <span className="lg:mr-4 text-gray-200">{swap.newplayername}</span>
-      </div>
-    </li>
-  ))
+  const { teamInfo, players, swaps, currentGWPoints, captainName, newCaptainName } = userTeamInfo
+  const captainTransfer = newCaptainName !== null && captainName !== newCaptainName
 
   return (
-    <div className="bg-gradient-to-br from-black to-red-950 text-white rounded-lg shadow-lg shadow-gray-600/50 px-6 pt-4">
-      <div className="flex justify-between">
-        <h1 className="lg:text-3xl text-lg font-bold text-gray-200 break-all">{teamInfo.teamname}</h1>
-        <p className="lg:text-2xl text-lg font-bold text-green-600">Total: {teamInfo.total}</p>
-      </div>
-      <div className="flex justify-between">
-        <h2 className="lg:text-xl text-lg italic text-blue-600">{teamInfo.fullname}</h2>
-        <p className="lg:text-xl text-sm font-semibold text-gray-200 italic">Current GW: {currentGWPoints}</p>
-      </div>
-      <div className="flex justify-between lg:mt-4 mt-2 mb-2">
-        <h4 className="lg:text-xl text-base text-white font-semibold">Team</h4>
-        <button
-          type="button"
-          className="text-blue-500 border border-blue-700 rounded-lg text-sm px-4 py-1 text-center hover:text-white hover:bg-blue-600"
-          onClick={() => window.location.href = "/edit-team"}
-        >
-          Edit
-        </button>
-      </div>
-      <ul className="overflow-y-scroll h-[360px] pr-4 bg-gray-500 bg-opacity-20 rounded-lg p-4 mb-6">
-        {players.map((player) => (
-          <li key={player.playerid} className="flex items-center py-1 px-2 justify-between border rounded-md">
-            <div className="flex flex-col">
-              <span className="font-semibold text-white lg:text-base text-sm">
-                {player.name}
-                {player.name === captainName ? <span className="text-yellow-600"> (C)</span> : ""}
-              </span>
-              <div className="flex">
-                <span className="text-gray-400 whitespace-pre lg:text-base text-sm text-left">£{player.price}m · </span>
-                <span className="text-gray-400 lg:text-base text-sm text-left">{formatSquad(player.squad)}</span>
-              </div>
-            </div>
-            <div className="flex flex-col text-right">
-              <span className="text-gray-300 lg:text-base text-sm font-semibold italic">Total: {player.total}</span>
-              <span className="text-blue-400 lg:text-base text-xs font-semibold ">
-                Current GW: {player.currentgw}
-                {player.name === captainName ? <span className="text-yellow-600"> (x2)</span> : ""}
-              </span>
-            </div>
-          </li>
-        ))}
-      </ul>
-
-      <h4 className="text-lg font-medium">Transfers</h4>
-      <ul className="list-disc pl-4 bg-gray-500 bg-opacity-20 rounded-lg p-4 mt-2 mb-6">
-        {swaps.length > 0 ? <div className="flex justify-between lg:hidden">
-          <span className="text-red-400">&#8594;</span> {/* Arrow symbol for swap */}
-          <span className="text-green-400">&#8594;</span> {/* Arrow symbol for swap */}
-        </div> : ""}
-        {(swaps.length > 0 || captainTransfer) ? swapsContent : <span className="text-gray-200">No transfers made</span>}
-        <div className="flex justify-between">
-
-          {/* if newCaptainName is not null and captainName != newCaptainName */}
-          {captainTransfer ? <>
-            <span className="text-gray-400 line-through text-left">{captainName} (C)</span>
-            <span className="text-gray-200 font-semibold text-right">{newCaptainName} (C)</span>
-          </> : ""}
-
+    <motion.div
+      initial={{ opacity: 0, y: 30 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6, ease: "easeOut" }}
+      className="w-full"
+    >
+      <Card className="bg-gradient-to-br from-zinc-900 via-black to-zinc-800 border border-zinc-700 shadow-2xl rounded-3xl p-6 w-full text-white space-y-6">
+        {/* Header */}
+        <div className="flex justify-between items-center">
+          <div>
+            <h1 className="text-2xl font-bold text-white tracking-tight">{teamInfo.teamname}</h1>
+            <p className="text-zinc-400 text-sm italic">{teamInfo.fullname}</p>
+          </div>
+          <div className="text-right space-y-1">
+            <p className="text-yellow-400 text-lg font-semibold">Total: {teamInfo.total}</p>
+            <p className="text-zinc-300 text-sm">GW Points: {currentGWPoints}</p>
+          </div>
         </div>
-      </ul>
-    </div>
+
+        {/* Squad header */}
+        <div className="flex justify-between items-center border-t border-zinc-700 pt-4">
+          <div className="flex items-center gap-2 text-lg font-medium">
+            <Users className="w-5 h-5 text-blue-400" />
+            <span>Squad</span>
+          </div>
+          <Button
+            variant="outline"
+            className="text-blue-500 border-blue-600 hover:bg-blue-600 hover:text-white"
+            onClick={() => window.location.href = "/edit-team"}
+          >
+            Edit
+          </Button>
+        </div>
+
+        {/* Player list */}
+        <ScrollArea className="h-[360px] pr-2">
+          <ul className="space-y-3">
+            {players.map((player, i) => {
+              const isCaptain = player.name === captainName
+              return (
+                <motion.li
+                  key={player.playerid}
+                  variants={fadeUp}
+                  initial="hidden"
+                  animate="visible"
+                  custom={i}
+                  className="flex justify-between items-center px-4 py-3 bg-zinc-800 border border-zinc-700 rounded-xl hover:bg-zinc-700 transition-all"
+                >
+                  <div className="space-y-1">
+                    <div className="flex items-center gap-2">
+                      <p className="font-semibold text-white text-sm lg:text-base">{player.name}</p>
+                      {isCaptain && <Crown className="w-4 h-4 text-yellow-400" />}
+                    </div>
+                    <p className="text-zinc-400 text-xs">
+                      £{player.price}m · {formatSquad(player.squad)}
+                    </p>
+                  </div>
+                  <div className="text-right space-y-1">
+                    <p className="text-sm font-medium text-white">Total: {player.total}</p>
+                    <p className="text-xs text-blue-400">
+                      GW: {player.currentgw}
+                      {isCaptain && <span className="ml-1 text-yellow-400">(x2)</span>}
+                    </p>
+                  </div>
+                </motion.li>
+              )
+            })}
+          </ul>
+        </ScrollArea>
+
+        {/* Transfers */}
+        <div className="space-y-2">
+          <div className="flex items-center gap-2 text-lg font-medium">
+            <ArrowRightLeft className="w-5 h-5 text-purple-400" />
+            <span>Transfers</span>
+          </div>
+
+          <CardContent className="bg-zinc-800 rounded-xl border border-zinc-700 p-4 space-y-3">
+            {swaps.length > 0 || captainTransfer ? (
+              <>
+                {swaps.map((swap, i) => (
+                  <motion.div
+                    key={swap.oldplayername}
+                    variants={fadeUp}
+                    initial="hidden"
+                    animate="visible"
+                    custom={i}
+                    className="flex justify-between text-sm text-zinc-300"
+                  >
+                    <span className="text-red-400 line-through">{swap.oldplayername}</span>
+                    <span className="text-green-400 font-medium">{swap.newplayername}</span>
+                  </motion.div>
+                ))}
+                {captainTransfer && (
+                  <motion.div
+                    variants={fadeUp}
+                    initial="hidden"
+                    animate="visible"
+                    custom={swaps.length}
+                    className="flex justify-between text-sm text-yellow-400"
+                  >
+                    <span className="line-through text-zinc-400">{captainName} (C)</span>
+                    <span className="font-semibold">{newCaptainName} (C)</span>
+                  </motion.div>
+                )}
+              </>
+            ) : (
+              <motion.p
+                variants={fadeUp}
+                initial="hidden"
+                animate="visible"
+                className="text-sm text-zinc-400"
+              >
+                No transfers made
+              </motion.p>
+            )}
+          </CardContent>
+        </div>
+      </Card>
+    </motion.div>
   )
 }

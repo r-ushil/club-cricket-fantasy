@@ -82,10 +82,11 @@ const PlayerSelectGrid = ({ selectedPlayers, allPlayers, captainPlayer, onSelect
       </div>
       {modalOpen && <PlayerModal players={selectablePlayers} onClose={handlePlayerSelect} />}
 
+      <label htmlFor="captain" className="mt-6 text-gray-200 font-bold">Captain</label>
       {/* Select  */}
       <select
         id="captain"
-        className="mt-6 bg-gray-500 bg-opacity-40 border border-gray-500 text-gray-300 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-1/2 p-2.5"
+        className="mt-2 bg-gray-500 bg-opacity-40 border border-gray-500 text-gray-300 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-1/2 p-2.5"
         onChange={handleCaptainSelect}
         value={captain?.playerid}
       >
@@ -97,13 +98,13 @@ const PlayerSelectGrid = ({ selectedPlayers, allPlayers, captainPlayer, onSelect
             {player?.name}
           </option>
         ))}
-    </select>
+      </select>
       <button
         className="my-8 bg-blue-800 hover:bg-blue-700 text-gray-200 font-bold py-2 px-4 rounded"
         onClick={async () => {
           // Validate team
           if (!validateTeam(selectedPlayers, captain)) {
-            alert("Please ensure you have selected 4 players from each squad, that your team is under £80m and a captain.");
+            alert("Please ensure you have selected 4 players from each squad, that your team is under £80m and has a captain.");
           } else {
             await onSubmit(selectedPlayers as Player[], captain as Player);
           }

@@ -1,55 +1,72 @@
-import { Team } from "@/types/team";
-import { FaArrowAltCircleUp } from "react-icons/fa";
-import { FaArrowAltCircleDown } from "react-icons/fa";
-import { FaMinus } from "react-icons/fa";
-import { FaCircle } from "react-icons/fa";
+"use client"
+
+import { Team } from "@/types/team"
+import { ArrowDownCircle, ArrowUpCircle, Minus, Circle } from "lucide-react"
+import { motion } from "framer-motion"
 
 interface LeaderboardProps {
-  teams: Team[];
+  teams: Team[]
 }
 
-
 export default function TeamDisplay({ teams }: LeaderboardProps) {
-  const sortedTeams = teams.sort((a, b) => a.position - b.position);
+  const sortedTeams = teams.sort((a, b) => a.position - b.position)
 
   const getFormIcon = (form: boolean | null) => {
+    if (form === null) return <Minus className="text-gray-500 w-4 h-4" />
+    if (form === true) return <ArrowUpCircle className="text-green-500 w-4 h-4" />
+    if (form === false) return <ArrowDownCircle className="text-red-500 w-4 h-4" />
+    return <Circle className="text-blue-500 w-4 h-4" />
+  }
 
-    // If form is null, return grey hyphen
-    if (form === null) {
-      return <FaMinus className="text-gray-500 text-sm" />;
-    }
-
-    if (form === true) {
-      return <FaArrowAltCircleUp className="text-green-500 text-sm" />;
-    }
-
-    if (form === false) {
-      return <FaArrowAltCircleDown className="text-red-500 text-sm" />;
-    }
-
-    // should never happen - this is an error.
-    return <FaCircle className="text-blue-500 text-sm" />;
-  };
+  const fadeUp = {
+    hidden: { opacity: 0, y: 12 },
+    visible: (i: number) => ({
+      opacity: 1,
+      y: 0,
+      transition: { delay: i * 0.05 }
+    })
+  }
 
   return (
-    <div className="bg-gradient-to-bl from-black to-red-950 text-white rounded-lg shadow-lg shadow-gray-600/50 px-6 pt-4 text-center"> {/* TODO: add lg:h-1/2 */}
-      <h1 className="lg:text-3xl text-lg font-extrabold text-gray-200 lg:mb-4 mb-2">ICUCC LEADERBOARD</h1>
+    <motion.div
+      initial={{ opacity: 0, y: 30 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6, ease: "easeOut" }}
+      className="bg-gradient-to-br from-zinc-900 via-black to-zinc-800 border border-zinc-700 shadow-2xl rounded-3xl px-6 py-6 w-full text-white space-y-4"
+    >
+      <h1 className="text-2xl lg:text-3xl font-bold tracking-tight text-gray-100 text-center">
+        ICUCC LEADERBOARD
+      </h1>
 
-      <ul className="overflow-y-auto max-h-[560px] pr-4 bg-gray-500 bg-opacity-20 rounded-lg p-4 mb-6">
-        {sortedTeams.map((team) => (
-          <li key={team.uuid} className="grid lg:grid-cols-[50px_250px_50px] grid-cols-[40px_130px_40px] items-center py-1 px-2 justify-between border rounded-md">
-            <div className="flex items-center">
+      <ul className="max-h-[560px] overflow-y-auto space-y-2 pr-2">
+        {sortedTeams.map((team, i) => (
+          <motion.li
+            key={team.uuid}
+            variants={fadeUp}
+            initial="hidden"
+            animate="visible"
+            custom={i}
+            className="grid grid-cols-[40px_1fr_60px] items-center px-4 py-3 bg-zinc-800 border border-zinc-700 rounded-xl hover:bg-zinc-700 transition-all"
+          >
+            {/* Form + Position */}
+            <div className="flex items-center gap-2">
               {getFormIcon(team.form)}
-              <span className="font-semibold ml-2 text-white text-center lg:text-base text-sm">{team.position}</span>
+              <span className="font-semibold text-white text-sm lg:text-base">{team.position}</span>
             </div>
-            <div className="flex flex-col px-2 text-left">
-              <span className="font-bold lg:text-base text-sm text-white">{team.teamname}</span>
-              <span className="italic lg:text-base text-sm text-gray-300">{team.fullname}</span>
+
+            {/* Team Name + Full Name */}
+            <div className="flex flex-col px-2 text-left ml-2">
+              <span className="font-bold text-white text-sm lg:text-base">{team.teamname}</span>
+              <span className="italic text-zinc-400 text-xs lg:text-sm">{team.fullname}</span>
             </div>
-            <span className="font-semibold lg:text-base text-sm text-gray-300 lg:pr-2 pr-2">{team.total}</span>
-          </li>
+
+            {/* Score */}
+            <span className="font-semibold text-zinc-300 text-sm lg:text-base text-right pr-1">
+              {team.total}
+            </span>
+          </motion.li>
         ))}
       </ul>
-    </div >
+    </motion.div>
   )
 }

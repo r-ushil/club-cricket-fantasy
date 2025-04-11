@@ -123,9 +123,9 @@ def get_batting_points(batting_innings):
             points = runs * POINTS_PER_RUN
 
         if runs >= 100:
-            points += POINTS_PER_100
+            points += 50 + POINTS_PER_100
         elif runs >= 50:
-            points += POINTS_PER_50
+            points += 25 + POINTS_PER_50
 
         fours = batter["fours"]
         if fours == "":
@@ -304,6 +304,33 @@ def main():
 
         supabase = create_client(os.environ["NEXT_PUBLIC_SUPABASE_URL"], os.environ["NEXT_PUBLIC_SUPABASE_ANON_KEY"])
 
+        try:
+            initial_positions_resp = supabase.table('users').select('id, total, position, form').execute()
+        except Exception as e:
+            print(f"Failed to fetch positions from Supabase.")
+            return
+        
+        points = {
+            "Shivit Kapoor": -200,
+            "Madhav Manoj": -45,
+            "Ebrahim Jahangiri": -75,
+            "Sidhanth Sureshkumar": -45,
+            "Sanjay Sankaranarayanan": -80,
+            "Alex Glover": -45,
+            "Ashish Lobo": -45,
+            "Anirudh Kotwal": -45
+        }
+        populate_supabase(supabase, points)
+
+        # get post positions
+        try:
+            post_positions_resp = supabase.table('users').select('id, total, position, form').execute()
+        except Exception as e:
+            print(f"Failed to fetch post-total positions from Supabase.")
+            return
+        
+        calculate_positions(supabase, initial_positions_resp.data, post_positions_resp.data)
+        return
         
 
         for match_id in matches:

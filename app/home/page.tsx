@@ -11,6 +11,8 @@ import FAQs from "@/components/FAQs";
 import Image from "next/image";
 import Announcement from "@/components/Announcement";
 import Footer from "@/components/Footer";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import HomeTabs from "@/components/HomeTabs";
 
 interface userTeamInfo {
   teamInfo: Team;
@@ -37,16 +39,16 @@ const getSupabaseInfo = async () => {
       captainName: string;
       newCaptainName: string | null;
     }];
-  
+
     const userQueries: Promise<UserQueriesResult> = Promise.all([
-        getTeamPlayers(supabase, user.id),
-        getSwaps(supabase, user.id),
-        getTeams(supabase, user.id),
-        getCaptainName(supabase, user.id)
+      getTeamPlayers(supabase, user.id),
+      getSwaps(supabase, user.id),
+      getTeams(supabase, user.id),
+      getCaptainName(supabase, user.id)
     ]);
-  
+
     const [players, swaps, teams, captainData] = await userQueries as UserQueriesResult;
-  
+
     const currentGWPoints = await getCurrentGWPoints(supabase, players, captainData.captainName);
 
     const userTeamInfo: userTeamInfo = {
@@ -129,11 +131,11 @@ const getTeams = async (supabase: SupabaseClient<any, "public", any>, userId: st
   return teamsArray;
 }
 
-const getCaptainName = async (supabase: SupabaseClient<any, "public", any>, userId: string): Promise<{captainName: string, newCaptainName: string | null}> => {
+const getCaptainName = async (supabase: SupabaseClient<any, "public", any>, userId: string): Promise<{ captainName: string, newCaptainName: string | null }> => {
   const { data: captainId } = await supabase.from("userplayers").select("playerid").eq("uuid", userId).eq("captain", true).single();
 
   if (!captainId) {
-    return {captainName: "", newCaptainName: null};
+    return { captainName: "", newCaptainName: null };
   }
 
   const { data: captainNameObj } = await supabase.from("players").select("name").eq("playerid", captainId.playerid).single();
@@ -142,7 +144,7 @@ const getCaptainName = async (supabase: SupabaseClient<any, "public", any>, user
   const { data: newCaptainNameObj } = await supabase.from("players").select("name").eq("playerid", newCaptainId!.nextcapt).single();
 
   if (!newCaptainNameObj) {
-    return { captainName: captainNameObj!.name , newCaptainName: null};
+    return { captainName: captainNameObj!.name, newCaptainName: null };
   }
 
   return { captainName: captainNameObj!.name, newCaptainName: newCaptainNameObj.name };
@@ -196,14 +198,13 @@ export default async function Home() {
       <NavBar />
       <Announcement />
       <div className="min-h-screen">
-        <div className="bg-gradient-to-b from-blue-950 to-gray-900 grid lg:grid-cols-2 grid-cols-1 gap-8 px-4 pt-12 pb-10 lg:gap-16 lg:px-16 lg:pt-12 lg:pb-10">
-          <TeamDisplay userTeamInfo={userTeamInfo} />
-          <Leaderboard teams={teams} />
+        <div className="flex bg-ic px-4 pt-6 lg:px-16 lg:pt-12">
+          <HomeTabs userTeamInfo={userTeamInfo} teams={teams} />
         </div>
 
         <div className="lg:h-screen lg:bg-cover lg:bg-bottom lg:bg-[url('/home_background.png')] bg-ic">
           <div className="w-full flex flex-col items-center">
-            <h2 className="text-3xl text-gray-200 text-center font-bold py-4 my-4">Frequently Asked Questions</h2>
+            <h2 className="text-3xl text-gray-200 text-center font-bold py-4 my-4">FAQs</h2>
             <FAQs items={FAQsData}></FAQs>
           </div>
 
